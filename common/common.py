@@ -5,6 +5,10 @@ from confs.config import SECRET_KEY
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import string
 import random
+from common.loggers import code_log
+from pydantic import ValidationError
+import json
+from db import Session
 
 
 class JsonResponse:
@@ -67,3 +71,30 @@ def get_new_file_name(old_file_name):
     else:
         new_file_name = '{0}_{1}'.format(old_file_name, randstr)
     return new_file_name
+
+
+def view_exception(*wargs, **wkwargs):
+    # Project Imports
+    def view_f(view_func):
+        @functools.wraps(view_func)
+        def wrapper(*args, **kwargs):
+            db_session = wkwargs.get('db_session', False)
+            se = None
+            try:
+                if db_session:
+                    se = Session()
+                    return view_func(*args, **kwargs, se=se)
+                else:
+                    return view_func(*args, **kwargs)
+            except ValidationError as e:
+                valid_dic = json.loads(e.json())[0]
+                msg = f"{' --> '.join(valid_dic['loc'])}: {valid_dic['msg']}"
+                return JsonResponse.fail(msg)
+            except Exception:
+                code_log.exception(wkwargs["fail_msg"])
+                return JsonResponse.fail("system error")
+            finally:
+                if db_session:
+                    se.close()
+        return wrapper
+    return view_f

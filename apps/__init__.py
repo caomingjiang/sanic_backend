@@ -4,6 +4,7 @@ from confs.config import BASE_DIR
 from flask import request
 from common.loggers import access_log
 import time
+import urllib.parse
 
 flask_app = flask.Flask(__name__, root_path=BASE_DIR)
 CORS(flask_app, supports_credentials=True)
@@ -27,9 +28,7 @@ def after_request(response):
     method = request.method
     request_url = request.path
     if method == 'GET' and request.args:
-        params_list = list()
-        for key in request.args:
-            params_list.append(key + '=' + request.args[key])
-        request_url += '?' + '&'.join(params_list)
+        query_str = urllib.parse.urlencode(request.args)
+        request_url += '?' + query_str
     access_log.info("{0} {1}ms {2} {3} {4}".format(str(status_code), str(request_time), request.method, request_url, remote_ip))
     return response

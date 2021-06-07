@@ -1,6 +1,7 @@
 from flask import request, Blueprint, redirect
-from common.common import get_md5, JsonResponse, login_required
-from db import Session as db_session, User
+from common.common import get_md5, JsonResponse, login_required, view_exception
+from common import data_validate
+from db import User
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from confs.config import SECRET_KEY, TOKEN_EXPIRES
 from datetime import datetime, timedelta
@@ -9,41 +10,31 @@ bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth/')
 
 
 @bp.route('login', methods=['POST'])
-def login():
-    se = db_session()
-    try:
-        account = request.json.get("account", "")
-        password = request.json.get("password", "")
-        if not all([account, password]):
-            return JsonResponse.fail("账号密码不能为空")
+@view_exception(fail_msg='login failed', db_session=True)
+def login(se):
+    req_data = data_validate.LoginValidate(**request.json)
 
-        db_user = se.query(User).filter(User.account == account).first()
-        if not db_user:
-            return JsonResponse.fail("该账号还未注册")
+    db_user = se.query(User).filter(User.account == req_data.account).first()
+    if not db_user:
+        return JsonResponse.fail("该账号不存在")
 
-        if db_user.status.code == '0':
-            return JsonResponse.fail("该账号已停用,如需开通,请联系管理员")
-
-        if db_user.password == get_md5(password):
-            s = Serializer(SECRET_KEY, expires_in=TOKEN_EXPIRES)
-            token = s.dumps({'user_id': db_user.id}).decode()
-            create_time = (db_user.create_time + timedelta(hours=8)).strftime('%Y-%m-%d %H:%M:%S')
-            ret_data = {
-                'token': token,
-                'user_info': {
-                    'account': account,
-                    'status': db_user.status.value,
-                    'username': db_user.username,
-                    'role_code': db_user.role.code,
-                    'user_id': db_user.id,
-                    'create_time': create_time
-                }
+    if db_user.password == get_md5(req_data.password):
+        s = Serializer(SECRET_KEY, expires_in=TOKEN_EXPIRES)
+        token = s.dumps({'user_id': db_user.id}).decode()
+        create_time = db_user.create_time.strftime('%Y-%m-%d %H:%M:%S')
+        ret_data = {
+            'token': token,
+            'user_info': {
+                'account': req_data.account,
+                'username': db_user.username,
+                'role_code': db_user.role.code,
+                'user_id': db_user.id,
+                'create_time': create_time
             }
-            return JsonResponse.success(ret_data)
-        else:
-            return JsonResponse.fail("密码错误")
-    finally:
-        se.close()
+        }
+        return JsonResponse.success(ret_data)
+    else:
+        return JsonResponse.fail("密码错误")
 
 
 # @bp.route('register', methods=['POST'])
@@ -75,20 +66,17 @@ def login():
 
 @bp.route('update_pwd', methods=['POST'])
 @login_required
-def update_pwd():
-    se = db_session()
-    try:
-        old_pwd = request.json.get('old_pwd')
-        new_pwd = request.json.get('new_pwd')
-        user_id = getattr(request, 'user_id')
+@view_exception(fail_msg='update_pwd failed', db_session=True)
+def update_pwd(se):
+    old_pwd = request.json.get('old_pwd')
+    new_pwd = request.json.get('new_pwd')
+    user_id = getattr(request, 'user_id')
 
-        user_obj = se.query(User).filter(User.id == user_id).first()
-        if get_md5(old_pwd) != user_obj.password:
-            return JsonResponse.fail('旧密码错误!')
-        else:
-            user_obj.password = get_md5(new_pwd)
-            se.commit()
-        return JsonResponse.success()
-    finally:
-        se.close()
+    user_obj = se.query(User).filter(User.id == user_id).first()
+    if get_md5(old_pwd) != user_obj.password:
+        return JsonResponse.fail('旧密码错误!')
+    else:
+        user_obj.password = get_md5(new_pwd)
+        se.commit()
+    return JsonResponse.success()
 
