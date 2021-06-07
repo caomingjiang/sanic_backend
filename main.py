@@ -1,8 +1,15 @@
 from apps import flask_app
+from scripts.init_data import init_main
 from apps.auth.view import bp as auth_bp
+from apps.user.view import bp as user_bp
+from apps.home.view import bp as home_bp
 
 
 flask_app.register_blueprint(auth_bp)
+flask_app.register_blueprint(user_bp)
+flask_app.register_blueprint(home_bp)
+
+init_main()
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-from db import Session, Role, User
+from db import Session, Role, User, DevStage
 from common.common import get_md5
 from datetime import datetime
 
@@ -43,6 +43,32 @@ def init_user():
         se.close()
 
 
+def init_dev_stage():
+    se = Session()
+    try:
+        dev_stages = [
+            'Mule', 'Simu', 'EP1', 'EP2', 'P', 'PP', 'SOP'
+        ]
+        now = datetime.now()
+        for dev_stage in dev_stages:
+            dev_stage_obj = se.query(DevStage).filter(DevStage.name == dev_stage).first()
+            if not dev_stage_obj:
+                se.add(
+                    DevStage(
+                        name=dev_stage, update_time=now, create_time=now
+                    )
+                )
+        se.commit()
+    finally:
+        se.close()
+
+
+def init_main():
+    init_user()
+    init_dev_stage()
+
+
 if __name__ == '__main__':
     init_user()
+    init_dev_stage()
 

@@ -68,15 +68,15 @@ def login(se):
 @login_required
 @view_exception(fail_msg='update_pwd failed', db_session=True)
 def update_pwd(se):
-    old_pwd = request.json.get('old_pwd')
-    new_pwd = request.json.get('new_pwd')
+    req_data = data_validate.UpdateUserPassword(**request.json)
     user_id = getattr(request, 'user_id')
 
     user_obj = se.query(User).filter(User.id == user_id).first()
-    if get_md5(old_pwd) != user_obj.password:
-        return JsonResponse.fail('旧密码错误!')
+    if get_md5(req_data.old_pwd) != user_obj.password:
+        return JsonResponse.fail('当前密码错误!')
     else:
-        user_obj.password = get_md5(new_pwd)
+        user_obj.password = get_md5(req_data.new_pwd)
+        user_obj.update_time = datetime.now()
         se.commit()
     return JsonResponse.success()
 
