@@ -59,6 +59,8 @@ def init_dev_stage():
                     )
                 )
         se.commit()
+    except Exception as e:
+        pass
     finally:
         se.close()
 
