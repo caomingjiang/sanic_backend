@@ -105,6 +105,9 @@ class CarTestInfo(Base):
     )
 
 
-Base.metadata.create_all(engine)
+try:
+    Base.metadata.create_all(engine)
+except Exception as e:
+    pass
 Session = sessionmaker(bind=engine)
 
