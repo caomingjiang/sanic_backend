@@ -39,7 +39,7 @@ def init_user():
                 )
                 se.add(new_user)
         se.commit()
-    except Exception as e:
+    except BaseException as e:
         pass
     finally:
         se.close()
@@ -61,7 +61,7 @@ def init_dev_stage():
                     )
                 )
         se.commit()
-    except Exception as e:
+    except BaseException as e:
         pass
     finally:
         se.close()
