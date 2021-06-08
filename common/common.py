@@ -95,7 +95,7 @@ def view_exception(*wargs, **wkwargs):
                 return JsonResponse.fail(msg)
             except Exception:
                 code_log.exception(wkwargs["fail_msg"])
-                return JsonResponse.fail("system error")
+                return JsonResponse.fail("系统错误，请联系管理员")
             finally:
                 if db_session:
                     se.close()

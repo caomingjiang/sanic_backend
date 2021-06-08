@@ -69,6 +69,10 @@ def get_dev_car_info(se):
 def put_dev_car_info(car_id, se):
     req_data = data_validate.AddCarInfo(**request.json)
 
+    exist = se.query(CarInfo).filter(CarInfo.car_name == req_data.car_name, CarInfo.id != car_id).first()
+    if exist:
+        return JsonResponse.fail("车型名称重复，请修改！")
+
     now = datetime.now()
     update_data = {
         'data_source': req_data.data_source,
