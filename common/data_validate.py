@@ -31,7 +31,7 @@ class AddCarInfo(BaseModel):
         if not test_time:
             return ''
         else:
-            if re.match(r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', test_time):
+            if re.match(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$', test_time):
                 return test_time
             else:
                 raise ValueError('wrong format, must be yyyy-MM-dd HH:mm:ss')

@@ -89,6 +89,9 @@ def view_exception(*wargs, **wkwargs):
             except ValidationError as e:
                 valid_dic = json.loads(e.json())[0]
                 msg = f"{' --> '.join(valid_dic['loc'])}: {valid_dic['msg']}"
+                req_data = json.dumps(request.args.to_dict(), ensure_ascii=False) if \
+                    request.method == 'GET' else json.dumps(request.json, ensure_ascii=False)
+                code_log.error(f'url: {request.path}, method: {request.method}, req_data: {req_data}, error_msg: {msg}')
                 return JsonResponse.fail(msg)
             except Exception:
                 code_log.exception(wkwargs["fail_msg"])
