@@ -39,6 +39,8 @@ def init_user():
                 )
                 se.add(new_user)
         se.commit()
+    except Exception as e:
+        pass
     finally:
         se.close()
 
