@@ -48,6 +48,7 @@ def get_dev_car_info(se):
     ).first()
 
     ret_data = {
+        'id': car_info.id,
         'car_name': car_info.car_name,
         'dev_stage_id': car_info.dev_stage_id,
         'data_source': car_test_info.data_source or '',
@@ -117,10 +118,17 @@ def get_car_test_info(car_id, se):
     car_test_info = se.query(CarTestInfo).filter(
         CarTestInfo.car_info_id == car_id, CarTestInfo.dev_stage_id == req_data.dev_stage_id
     ).first()
+    data_source, test_time, test_user = '', '', ''
+    if car_test_info:
+        data_source = car_test_info.data_source
+        test_time = car_test_info.test_time
+        test_time = test_time.strftime('%Y-%m-%d %H:%M:%S') if test_time else ''
+        test_user = car_test_info.test_user
+
     ret_data = {
-        'data_source': car_test_info.data_source if car_test_info else '',
-        'test_time': car_test_info.test_time if car_test_info else '',
-        'test_user': car_test_info.test_user if car_test_info else ''
+        'data_source': data_source,
+        'test_time': test_time,
+        'test_user': test_user
     }
     return JsonResponse.success(ret_data)
 
