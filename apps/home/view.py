@@ -51,6 +51,7 @@ def get_dev_car_info(se):
         'id': car_info.id,
         'car_name': car_info.car_name,
         'dev_stage_id': car_info.dev_stage_id,
+        'dev_stage': car_info.dev_stage.name,
         'data_source': car_test_info.data_source or '',
         'test_time': car_test_info.test_time.strftime('%Y-%m-%d %H:%M:%S') if car_test_info.test_time else '',
         'test_user': car_test_info.test_user or '',
