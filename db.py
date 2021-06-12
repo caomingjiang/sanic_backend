@@ -1,6 +1,6 @@
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy import create_engine, Integer, String, ForeignKey, Column, Boolean, Index
+from sqlalchemy import create_engine, Integer, String, Float, ForeignKey, Column, Boolean, Index
 from sqlalchemy.dialects.mysql import DATETIME, INTEGER, LONGTEXT, SMALLINT, TINYINT
 from sqlalchemy_utils import ChoiceType
 from confs.config import MYSQL_CONFIG
@@ -103,6 +103,85 @@ class CarTestInfo(Base):
         Index('car_info_dev_stage_uniq', 'car_info_id', 'dev_stage_id', unique=True),
         {'comment': '车型 测试/分析 历史信息'}
     )
+
+
+class ChassisBase(Base):
+    __tablename__ = 'chassis_base'
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    radiation_sound = Column(Float, comment='轮胎-胎面辐射声（轮胎选型）')
+    peak_frequency = Column(Float, comment='轮胎-力传递峰值频率')
+    force_transfer = Column(Float, comment='轮胎-力传递峰值')
+    stability_performance = Column(Float, comment='轮胎-操稳性能')
+    durability = Column(Float, comment='轮胎-耐久性能')
+    rim_stiffness_a = Column(Float, comment='轮辋刚度-16-17’')
+    rim_stiffness_b = Column(Float, comment='轮辋刚度-18-19’')
+    full_bend_mode = Column(Float, comment='前副车架（自由-自由）-全副车架(bend)模态')
+    half_bend_mode = Column(Float, comment='前副车架（自由-自由）-半副车架(bend)模态')
+    torsion_beam = Column(Float, comment='后副车架（自由-自由）-类型一：扭转梁(bend)模态')
+    multi_link = Column(Float, comment='后副车架（自由-自由）-类型二：多连杆(横梁弯曲)模态')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        {'comment': '底盘-基本信息'}
+    )
+
+    def to_dict(self):
+        return {
+            c.name: getattr(self, c.name) for c in self.__table__.columns
+            if c.name not in ['update_time', 'create_time', 'id']
+        }
+
+
+class ChassisDetail(Base):
+    __tablename__ = 'chassis_detail'
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    handling_x = Column(Float, comment='前下摆臂handling衬套-X向静刚度')
+    handling_y = Column(Float, comment='前下摆臂handling衬套-Y向静刚度')
+    handling_z = Column(Float, comment='前下摆臂handling衬套-Z向静刚度')
+    handling_stability = Column(Float, comment='前下摆臂handling衬套-操稳性能')
+    handling_durability = Column(Float, comment='前下摆臂handling衬套-耐久性能')
+    ride_x = Column(Float, comment='前下摆臂ride衬套-X向静刚度')
+    ride_y = Column(Float, comment='前下摆臂ride衬套-Y向静刚度')
+    ride_z = Column(Float, comment='前下摆臂ride衬套-Z向静刚度')
+    ride_stability = Column(Float, comment='前下摆臂ride衬套-操稳性能')
+    ride_durability = Column(Float, comment='前下摆臂ride衬套-耐久性能')
+    front_subframe_x = Column(Float, comment='后副车架前衬套-X向静刚度')
+    front_subframe_y = Column(Float, comment='后副车架前衬套-Y向静刚度')
+    front_subframe_z = Column(Float, comment='后副车架前衬套-Z向静刚度')
+    front_subframe_stability = Column(Float, comment='后副车架前衬套-操稳性能')
+    front_subframe_durability = Column(Float, comment='后副车架前衬套-耐久性能')
+    backend_subframe_x = Column(Float, comment='后副车架后衬套-X向静刚度')
+    backend_subframe_y = Column(Float, comment='后副车架后衬套-Y向静刚度')
+    backend_subframe_z = Column(Float, comment='后副车架后衬套-Z向静刚度')
+    backend_subframe_stability = Column(Float, comment='后副车架后衬套-操稳性能')
+    backend_subframe_durability = Column(Float, comment='后副车架后衬套-耐久性能')
+    blade_arm_x = Column(Float, comment='刀锋臂衬套-X向静刚度')
+    blade_arm_y = Column(Float, comment='刀锋臂衬套-Y向静刚度')
+    blade_arm_z = Column(Float, comment='刀锋臂衬套-Z向静刚度')
+    blade_arm_stability = Column(Float, comment='刀锋臂衬套-操稳性能')
+    blade_arm_durability = Column(Float, comment='刀锋臂衬套-耐久性能')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        {'comment': '底盘-详细信息'}
+    )
+
+    def to_dict(self):
+        return {
+            c.name: getattr(self, c.name) for c in self.__table__.columns
+            if c.name not in ['update_time', 'create_time', 'id']
+        }
 
 
 try:
