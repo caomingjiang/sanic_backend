@@ -9,3 +9,4 @@ logs/
 local_settings.py
 media/
 py3env/
+upload/

@@ -13,5 +13,10 @@ MYSQL_CONFIG = {
 SECRET_KEY = '123123213213'
 TOKEN_EXPIRES = 8 * 60 * 60  # 秒
 
+# 文件上传的文件夹路径
+UPLOAD_DIR = os.path.join(BASE_DIR, 'upload')
+if not os.path.exists(UPLOAD_DIR):
+    os.makedirs(UPLOAD_DIR)
+
 
 
