@@ -184,6 +184,262 @@ class ChassisDetail(Base):
         }
 
 
+class ModalMap(Base):
+    __tablename__ = 'd_modal_map'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    value_range = Column(String(128), nullable=False, comment='值范围')
+    front_tire = Column(Float, comment='前悬-轮胎')
+    front_power_train = Column(Float, comment='前悬-动力总成')
+    front_fsubframe = Column(Float, comment='前悬-前副车架')
+    front_fdc_arm = Column(Float, comment='前悬-前下控制臂')
+    front_fspring = Column(Float, comment='前悬-前弹簧')
+    front_fork_arm = Column(Float, comment='前悬-上叉臂')
+    front_fsta_bar = Column(Float, comment='前悬-前稳定杆')
+    backend_bsubframe = Column(Float, comment='后悬-后副车架')
+    backend_bspring = Column(Float, comment='后悬-后弹簧')
+    backend_blade_arm = Column(Float, comment='后悬-刀锋臂')
+    backend_fdc_arm = Column(Float, comment='后悬-前下控制臂')
+    backend_bdc_arm = Column(Float, comment='后悬-后下控制臂')
+    backend_fuc_arm = Column(Float, comment='后悬-前上控制臂')
+    backend_buc_arm = Column(Float, comment='后悬-后上控制臂')
+    backend_bsta_bar = Column(Float, comment='后悬-后稳定杆')
+    body_fcm_skylight = Column(Float, comment='车身-天窗前横梁')
+    body_rcm_roof = Column(Float, comment='车身-顶棚后横梁')
+    body_f_windshield = Column(Float, comment='车身-前风挡')
+    body_skylight = Column(Float, comment='车身-天窗')
+    body_b_windshield = Column(Float, comment='车身-后风挡')
+    body_f_floor = Column(Float, comment='车身-前地板')
+    body_b_floor = Column(Float, comment='车身-后地板')
+    body_coat_rack = Column(Float, comment='车身-衣帽架')
+    body_swh_slot = Column(Float, comment='车身-备胎槽')
+    body_vocal_cavity = Column(Float, comment='车身-声腔')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_value_range', 'car_info_id', 'value_range', unique=True),
+        {'comment': 'ModalMap表'}
+    )
+
+
+
+class Dstiff(Base):
+    __tablename__ = 'd_dstiff'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    frequency = Column(Float, nullable=False, comment='频率')
+    fsb_ap_x = Column(Float, comment='前悬左塔座接附点X')
+    fsb_ap_y = Column(Float, comment='前悬左塔座接附点Y')
+    fsb_ap_z = Column(Float, comment='前悬左塔座接附点Z')
+    fslca_fap_x = Column(Float, comment='前悬左控制臂前接附点X')
+    fslca_fap_y = Column(Float, comment='前悬左控制臂前接附点Y')
+    fslca_fap_z = Column(Float, comment='前悬左控制臂前接附点Z')
+    fslca_rap_x = Column(Float, comment='前悬左控制臂后接附点X')
+    fslca_rap_y = Column(Float, comment='前悬左控制臂后接附点Y')
+    fslca_rap_z = Column(Float, comment='前悬左控制臂后接附点Z')
+    lba_ap_x = Column(Float, comment='左刀锋臂接附点X')
+    lba_ap_y = Column(Float, comment='左刀锋臂接附点Y')
+    lba_ap_z = Column(Float, comment='左刀锋臂接附点Z')
+    rslsa_ap_x = Column(Float, comment='后悬左减震接附点X')
+    rslsa_ap_y = Column(Float, comment='后悬左减震接附点Y')
+    rslsa_ap_z = Column(Float, comment='后悬左减震接附点Z')
+    rsls_ap_x = Column(Float, comment='后悬左弹簧接附点X')
+    rsls_ap_y = Column(Float, comment='后悬左弹簧接附点Y')
+    rsls_ap_z = Column(Float, comment='后悬左弹簧接附点Z')
+    rsluca_ap_x = Column(Float, comment='后悬左上控制臂接附点X')
+    rsluca_ap_y = Column(Float, comment='后悬左上控制臂接附点Y')
+    rsluca_ap_z = Column(Float, comment='后悬左上控制臂接附点Z')
+    rslll_ap_x = Column(Float, comment='后悬左下拉杆接附点X')
+    rslll_ap_y = Column(Float, comment='后悬左下拉杆接附点Y')
+    rslll_ap_z = Column(Float, comment='后悬左下拉杆接附点Z')
+    rslsai_ap_x = Column(Float, comment='后悬左弹簧臂内接附点X')
+    rslsai_ap_y = Column(Float, comment='后悬左弹簧臂内接附点Y')
+    rslsai_ap_z = Column(Float, comment='后悬左弹簧臂内接附点Z')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
+        {'comment': 'Dstiff表'}
+    )
+
+
+class NtfDr(Base):
+    __tablename__ = 'd_ntf_dr'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    frequency = Column(Float, nullable=False, comment='频率')
+    fslftt_driver_x = Column(Float, comment='前悬左前塔座到DriverX')
+    fslftt_driver_y = Column(Float, comment='前悬左前塔座到DriverY')
+    fslftt_driver_z = Column(Float, comment='前悬左前塔座到DriverZ')
+    fslfca_driver_x = Column(Float, comment='前悬左前控制臂到DriverX')
+    fslfca_driver_y = Column(Float, comment='前悬左前控制臂到DriverY')
+    fslfca_driver_z = Column(Float, comment='前悬左前控制臂到DriverZ')
+    fslrca_driver_x = Column(Float, comment='前悬左后控制臂到DriverX')
+    fslrca_driver_y = Column(Float, comment='前悬左后控制臂到DriverY')
+    fslrca_driver_z = Column(Float, comment='前悬左后控制臂到DriverZ')
+    lba_driver_x = Column(Float, comment='左刀锋臂到DriverX')
+    lba_driver_y = Column(Float, comment='左刀锋臂到DriverY')
+    lba_driver_z = Column(Float, comment='左刀锋臂到DriverZ')
+    rslrsa_diver_x = Column(Float, comment='后悬左后减振器到DriverX')
+    rslrsa_diver_y = Column(Float, comment='后悬左后减振器到DriverY')
+    rslrsa_diver_z = Column(Float, comment='后悬左后减振器到DriverZ')
+    rslrss_driver_x = Column(Float, comment='后悬左后弹簧座到DriverX')
+    rslrss_driver_y = Column(Float, comment='后悬左后弹簧座到DriverY')
+    rslrss_driver_z = Column(Float, comment='后悬左后弹簧座到DriverZ')
+    rsulca_driver_x = Column(Float, comment='后悬左上控制臂到DriverX')
+    rsulca_driver_y = Column(Float, comment='后悬左上控制臂到DriverY')
+    rsulca_driver_z = Column(Float, comment='后悬左上控制臂到DriverZ')
+    rlll_driver_x = Column(Float, comment='后悬左下拉杆到DriverX')
+    rlll_driver_y = Column(Float, comment='后悬左下拉杆到DriverY')
+    rlll_driver_z = Column(Float, comment='后悬左下拉杆到DriverZ')
+    rslsa_driver_x = Column(Float, comment='后悬左弹簧托臂到DriverX')
+    rslsa_driver_y = Column(Float, comment='后悬左弹簧托臂到DriverY')
+    rslsa_driver_z = Column(Float, comment='后悬左弹簧托臂到DriverZ')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
+        {'comment': 'NtfDr表'}
+    )
+
+
+class NtfRr(Base):
+    __tablename__ = 'd_ntf_rr'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    frequency = Column(Float, nullable=False, comment='频率')
+    fslft_passenger_x = Column(Float, comment='前悬左前塔座到PassengerX')
+    fslft_passenger_y = Column(Float, comment='前悬左前塔座到PassengerY')
+    fslft_passenger_z = Column(Float, comment='前悬左前塔座到PassengerZ')
+    fslfca_passenger_x = Column(Float, comment='前悬左前控制臂到PassengerX')
+    fslfca_passenger_y = Column(Float, comment='前悬左前控制臂到PassengerY')
+    fslfca_passenger_z = Column(Float, comment='前悬左前控制臂到PassengerZ')
+    fslrca_passenger_x = Column(Float, comment='前悬左后控制臂到PassengerX')
+    fslrca_passenger_y = Column(Float, comment='前悬左后控制臂到PassengerY')
+    fslrca_passenger_z = Column(Float, comment='前悬左后控制臂到PassengerZ')
+    lba_passenger_x = Column(Float, comment='左刀锋臂到PassengerX')
+    lba_passenger_y = Column(Float, comment='左刀锋臂到PassengerY')
+    lba_passenger_z = Column(Float, comment='左刀锋臂到PassengerZ')
+    rslrsa_passenger_x = Column(Float, comment='后悬左后减振器到PassengerX')
+    rslrsa_passenger_y = Column(Float, comment='后悬左后减振器到PassengerY')
+    rslrsa_passenger_z = Column(Float, comment='后悬左后减振器到PassengerZ')
+    rslrss_passenger_x = Column(Float, comment='后悬左后弹簧座到PassengerX')
+    rslrss_passenger_y = Column(Float, comment='后悬左后弹簧座到PassengerY')
+    rslrss_passenger_z = Column(Float, comment='后悬左后弹簧座到PassengerZ')
+    rsluca_passenger_x = Column(Float, comment='后悬左上控制臂到PassengerX')
+    rsluca_passenger_y = Column(Float, comment='后悬左上控制臂到PassengerY')
+    rsluca_passenger_z = Column(Float, comment='后悬左上控制臂到PassengerZ')
+    rlll_passenger_x = Column(Float, comment='后悬左下拉杆到PassengerX')
+    rlll_passenger_y = Column(Float, comment='后悬左下拉杆到PassengerY')
+    rlll_passenger_z = Column(Float, comment='后悬左下拉杆到PassengerZ')
+    rslsa_passenger_x = Column(Float, comment='后悬左弹簧托臂到PassengerX')
+    rslsa_passenger_y = Column(Float, comment='后悬左弹簧托臂到PassengerY')
+    rslsa_passenger_z = Column(Float, comment='后悬左弹簧托臂到PassengerZ')
+
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
+        {'comment': 'NtfRr表'}
+    )
+
+
+class SpindleNtfDr(Base):
+    __tablename__ = 'd_spindle_ntf_dr'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    frequency = Column(Float, nullable=False, comment='频率')
+    lfwc_driver_x = Column(Float, comment='左前轮心_DriverX')
+    lfwc_driver_y = Column(Float, comment='左前轮心_DriverY')
+    lfwc_driver_z = Column(Float, comment='左前轮心_DriverZ')
+    rfwc_driver_x = Column(Float, comment='右前轮心_DriverX')
+    rfwc_driver_y = Column(Float, comment='右前轮心_DriverY')
+    rfwc_driver_z = Column(Float, comment='右前轮心_DriverZ')
+    lrwh_driver_x = Column(Float, comment='左后轮心_DriverX')
+    lrwh_driver_y = Column(Float, comment='左后轮心_DriverY')
+    lrwh_driver_z = Column(Float, comment='左后轮心_DriverZ')
+    rrwc_driver_x = Column(Float, comment='右后轮心_DriverX')
+    rrwc_driver_y = Column(Float, comment='右后轮心_DriverY')
+    rrwc_driver_z = Column(Float, comment='右后轮心_DriverZ')
+
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
+        {'comment': 'SpindleNtfDr表'}
+    )
+
+
+class SpindleNtfRr(Base):
+    __tablename__ = 'd_spindle_ntf_rr'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    frequency = Column(Float, nullable=False, comment='频率')
+    lfwc_rrx = Column(Float, comment='左前轮心_RRX')
+    lfwc_rry = Column(Float, comment='左前轮心_RRY')
+    lfwc_rrz = Column(Float, comment='左前轮心_RRZ')
+    rfwc_rrx = Column(Float, comment='右前轮心_RRX')
+    rfwc_rry = Column(Float, comment='右前轮心_RRY')
+    rfwc_rrz = Column(Float, comment='右前轮心_RRZ')
+    lrwh_rrx = Column(Float, comment='左后轮心_RRX')
+    lrwh_rry = Column(Float, comment='左后轮心_RRY')
+    lrwh_rrz = Column(Float, comment='左后轮心_RRZ')
+    rrwc_rrx = Column(Float, comment='右后轮心_RRX')
+    rrwc_rry = Column(Float, comment='右后轮心_RRY')
+    rrwc_rrz = Column(Float, comment='右后轮心_RRZ')
+
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
+        {'comment': 'SpindleNtfRr表'}
+    )
+
+
+class ActualTestData(Base):
+    __tablename__ = 'd_actual_test_data'
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    frequency = Column(Float, nullable=False, comment='频率')
+    act_driver = Column(Float, comment='实测_Driver')
+    act_rr_passenger = Column(Float, comment='实测_RR-Passenger')
+
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
+        {'comment': '实测数据表'}
+    )
+
+
 try:
     Base.metadata.create_all(engine)
 except Exception as e:
