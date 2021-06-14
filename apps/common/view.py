@@ -1,6 +1,6 @@
 import os
-from flask import Blueprint, request
-from confs.config import UPLOAD_DIR
+from flask import Blueprint, request, Response, send_file
+from confs.config import UPLOAD_DIR, EXCEL_MODAL_DIR
 from common.common import JsonResponse, login_required, view_exception
 from common.common import get_new_file_name
 from datetime import datetime
@@ -28,3 +28,15 @@ def upload_file():
     }
     return JsonResponse.success(ret_data)
 
+
+@bp.route('excel/modal/download/<file_name>', methods=['GET'])
+@login_required
+@view_exception(fail_msg="download_file failed")
+def download_file(file_name):
+    full_path = os.path.join(EXCEL_MODAL_DIR, file_name)
+    # with open(full_path, 'rb+') as f:
+    #     ret_value = f.read()
+    # response = Response(ret_value, content_type='application/octet-stream')
+    # response.headers['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_name.encode().decode("latin1"))
+    # return response
+    return send_file(full_path)

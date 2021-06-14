@@ -18,5 +18,7 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'upload')
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
 
+EXCEL_MODAL_DIR = os.path.join(BASE_DIR, 'excel_modal')
+
 
 
