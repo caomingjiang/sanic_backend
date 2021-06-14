@@ -226,7 +226,6 @@ class ModalMap(Base):
     )
 
 
-
 class Dstiff(Base):
     __tablename__ = 'd_dstiff'
     id = Column(INTEGER(11), primary_key=True)
@@ -437,6 +436,35 @@ class ActualTestData(Base):
     __table_args__ = (
         Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
         {'comment': '实测数据表'}
+    )
+
+
+class CarExcelData(Base):
+    __tablename__ = 'car_excel_data'
+    DATA_TYPE_ITEMS = (
+        ('modal_map', "ModalMap表"),
+        ('dstiff', "Dstiff表"),
+        ('ntf_dr', "NtfDr表"),
+        ('ntf_rr', "NtfRr表"),
+        ('spindle_ntf_dr', "SpindleNtfDr表"),
+        ('spindle_ntf_rr', "SpindleNtfRr表"),
+        ('actual_test_data', "实测数据表"),
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    excel_name = Column(String(128), comment='excel文件名称')
+    excel_path = Column(String(250), comment='excel文件路径')
+    active_id = Column(ForeignKey('car_excel_data.id'), comment="生效数据")
+    active = relationship('CarExcelData')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        {'comment': '车型excel对应表'}
     )
 
 

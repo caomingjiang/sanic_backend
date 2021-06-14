@@ -1,5 +1,5 @@
 from pydantic import BaseModel, StrictInt, StrictStr, Field, validator, constr
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import Literal
 import re
 
@@ -86,3 +86,23 @@ class ChassisUpdateValidate(BaseModel):
 
 class GetCarTestInfo(BaseModel):
     dev_stage_id: int
+
+
+class DownloadFileParams(BaseModel):
+    fp: str
+
+
+class ExcelInfo(BaseModel):
+    name: str
+    url: str
+
+
+class SaveFreqData(BaseModel):
+    save_type: str
+    active_car_id: int
+    excel_info: List[ExcelInfo]
+
+
+class GetSelectFreqData(BaseModel):
+    select_type: str
+    select_car_id: int

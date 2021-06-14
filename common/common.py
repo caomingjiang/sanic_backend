@@ -29,7 +29,7 @@ class JsonResponse:
         res = jsonify({
             "code": 0,
             "msg": msg,
-            "data": data or {}
+            "data": {} if data is None else data
         })
         return res
 

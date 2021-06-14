@@ -4,6 +4,7 @@ from confs.config import UPLOAD_DIR, EXCEL_MODAL_DIR
 from common.common import JsonResponse, login_required, view_exception
 from common.common import get_new_file_name
 from datetime import datetime
+from common import data_validate
 
 
 bp = Blueprint('common', __name__, url_prefix='/api/v1/common/')
@@ -24,19 +25,28 @@ def upload_file():
     file.save(file_path)
     ret_data = {
         'name': file.filename,
-        'url': f'/media/{user_id}/{today}/{file_name}'
+        'url': f'{user_id}/{today}/{file_name}'
     }
     return JsonResponse.success(ret_data)
 
 
 @bp.route('excel/modal/download/<file_name>', methods=['GET'])
 @login_required
-@view_exception(fail_msg="download_file failed")
-def download_file(file_name):
+@view_exception(fail_msg="download_modal failed")
+def download_modal(file_name):
     full_path = os.path.join(EXCEL_MODAL_DIR, file_name)
     # with open(full_path, 'rb+') as f:
     #     ret_value = f.read()
     # response = Response(ret_value, content_type='application/octet-stream')
     # response.headers['Content-Disposition'] = 'attachment;filename="{0}"'.format(file_name.encode().decode("latin1"))
     # return response
+    return send_file(full_path)
+
+
+@bp.route('media', methods=['GET'])
+@login_required
+@view_exception(fail_msg="download_file failed")
+def download_file():
+    req_data = data_validate.DownloadFileParams(**request.args.to_dict())
+    full_path = os.path.join(UPLOAD_DIR, req_data.fp)
     return send_file(full_path)
