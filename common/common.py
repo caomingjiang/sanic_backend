@@ -101,3 +101,13 @@ def view_exception(*wargs, **wkwargs):
                     se.close()
         return wrapper
     return view_f
+
+
+def get_orm_comment_dic(base_model):
+    ret_data = {}
+    for column in base_model.__table__.columns:
+        comment = getattr(base_model, column.name).comment
+        if comment:
+            ret_data[comment] = column.name
+    return ret_data
+

@@ -1,6 +1,8 @@
 from flask import Blueprint, request
+from apps.freq_data.control import SaveExcelData
 from common.common import JsonResponse, login_required, view_exception
-from db import CarInfo, ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, CarExcelData
+from confs.config import CommonThreadPool
+from db import CarInfo, CarExcelData
 from common import data_validate
 from datetime import datetime
 
@@ -67,8 +69,13 @@ def save_freq_data(se):
         return JsonResponse.fail('请先设置当前车型')
 
     now = datetime.now()
-    excel_name = req_data.excel_info[0].name if req_data.excel_info else None
-    excel_path = req_data.excel_info[0].url if req_data.excel_info else None
+    excel_name, excel_path = None, None
+    if req_data.excel_info:
+        excel_name = req_data.excel_info[0].name
+        excel_path = req_data.excel_info[0].url
+        save_obj = SaveExcelData(excel_path, req_data.active_car_id, se)
+        CommonThreadPool.submit(getattr(save_obj, f'save_{req_data.save_type}'))
+
     active_car_excel = se.query(CarExcelData).filter(
         CarExcelData.car_info_id == req_data.active_car_id, CarExcelData.data_type == req_data.save_type
     ).first()
@@ -101,12 +108,6 @@ def save_freq_data(se):
         )
         se.add(car_excel)
     se.commit()
-
-    # data_type_list = [
-    #     'modal_map', 'dstiff', 'ntf_dr', 'ntf_rr', 'spindle_ntf_dr', 'spindle_ntf_rr',
-    #     'actual_test_data'
-    # ]
-
     return JsonResponse.success()
 
 
