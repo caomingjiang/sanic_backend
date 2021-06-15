@@ -1,5 +1,5 @@
 import os
-from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData
+from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, Session as db_session
 from confs.config import UPLOAD_DIR
 import pandas as pd
 from datetime import datetime
@@ -20,12 +20,12 @@ pd.set_option('max_colwidth', 100)
 
 
 class SaveExcelData(object):
-    def __init__(self, excel_path, car_id, se):
+    def __init__(self, excel_path, car_id):
         self.full_excel_path = os.path.join(UPLOAD_DIR, excel_path)
         self.car_id = car_id
-        self.se = se
-    
+
     def save_modal_map(self):
+        se = db_session()
         try:
             now = datetime.now()
             df = pd.read_excel(self.full_excel_path)
@@ -47,12 +47,15 @@ class SaveExcelData(object):
                 })
                 stmt = insert(ModalMap).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_modal_map failed')
+        finally:
+            se.close()
 
     def save_dstiff(self):
+        se = db_session()
         try:
             df = pd.read_excel(self.full_excel_path)
             df = df.round(2)
@@ -67,12 +70,15 @@ class SaveExcelData(object):
                 })
                 stmt = insert(Dstiff).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_dstiff failed')
+        finally:
+            se.close()
 
     def save_ntf_dr(self):
+        se = db_session()
         try:
             df = pd.read_excel(self.full_excel_path)
             df = df.round(2)
@@ -87,12 +93,15 @@ class SaveExcelData(object):
                 })
                 stmt = insert(NtfDr).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_dstiff failed')
+        finally:
+            se.close()
 
     def save_ntf_rr(self):
+        se = db_session()
         try:
             df = pd.read_excel(self.full_excel_path)
             df = df.round(2)
@@ -107,12 +116,15 @@ class SaveExcelData(object):
                 })
                 stmt = insert(NtfRr).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_ntf_rr failed')
+        finally:
+            se.close()
 
     def save_spindle_ntf_dr(self):
+        se = db_session()
         try:
             df = pd.read_excel(self.full_excel_path)
             df = df.round(2)
@@ -127,12 +139,15 @@ class SaveExcelData(object):
                 })
                 stmt = insert(SpindleNtfDr).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_spindle_ntf_dr failed')
+        finally:
+            se.close()
 
     def save_spindle_ntf_rr(self):
+        se = db_session()
         try:
             df = pd.read_excel(self.full_excel_path)
             df = df.round(2)
@@ -147,12 +162,15 @@ class SaveExcelData(object):
                 })
                 stmt = insert(SpindleNtfRr).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_spindle_ntf_rr failed')
+        finally:
+            se.close()
 
     def save_actual_test_data(self):
+        se = db_session()
         try:
             df = pd.read_excel(self.full_excel_path)
             df = df.round(2)
@@ -167,7 +185,9 @@ class SaveExcelData(object):
                 })
                 stmt = insert(ActualTestData).values(**single_data)
                 stmt = stmt.on_duplicate_key_update(**single_data)
-                self.se.execute(stmt)
-            self.se.commit()
+                se.execute(stmt)
+            se.commit()
         except Exception as e:
             code_log.exception('save_actual_test_data failed')
+        finally:
+            se.close()
