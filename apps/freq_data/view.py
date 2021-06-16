@@ -1,7 +1,6 @@
 from flask import Blueprint, request
 from apps.freq_data.control import SaveExcelData
 from common.common import JsonResponse, login_required, view_exception
-from confs.config import CommonThreadPool
 from db import CarInfo, CarExcelData
 from common import data_validate
 from datetime import datetime
@@ -73,8 +72,8 @@ def save_freq_data(se):
     if req_data.excel_info:
         excel_name = req_data.excel_info[0].name
         excel_path = req_data.excel_info[0].url
-        save_obj = SaveExcelData(excel_path, req_data.active_car_id)
-        CommonThreadPool.submit(getattr(save_obj, f'save_{req_data.save_type}'))
+        save_obj = SaveExcelData(excel_path, req_data.active_car_id, se)
+        getattr(save_obj, f'save_{req_data.save_type}')()
 
     active_car_excel = se.query(CarExcelData).filter(
         CarExcelData.car_info_id == req_data.active_car_id, CarExcelData.data_type == req_data.save_type
