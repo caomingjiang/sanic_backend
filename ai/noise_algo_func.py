@@ -8,8 +8,8 @@ Created on Mon Jun  7 23:41:12 2021
 
 import pandas as pd 
 import numpy as np
-from map_dict_utils import *
-from hyper_parmas import div_hyper_params
+from ai.map_dict_utils import *
+from ai.hyper_parmas import div_hyper_params
 
 def single_predict_func(data_map):
     '''

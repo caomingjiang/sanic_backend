@@ -64,3 +64,10 @@ def update_chassis_info(se):
     se.commit()
     return JsonResponse.success()
 
+
+@bp.route('tire_score', methods=['POST'])
+@login_required
+@view_exception(fail_msg='calculate_tire_score failed')
+def calculate_tire_score():
+    req_data = data_validate.ChassisBaseValidate(**request.json)
+    return JsonResponse.success()

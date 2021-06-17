@@ -4,6 +4,7 @@ from sqlalchemy import create_engine, Integer, String, Float, ForeignKey, Column
 from sqlalchemy.dialects.mysql import DATETIME, INTEGER, LONGTEXT, SMALLINT, TINYINT
 from sqlalchemy_utils import ChoiceType
 from confs.config import MYSQL_CONFIG
+from enum import Enum, unique
 
 
 engine = create_engine('mysql+pymysql://{user}:{password}@{host}:{port}/{db}'.format(**MYSQL_CONFIG),
@@ -107,22 +108,27 @@ class CarTestInfo(Base):
 
 class ChassisBase(Base):
     __tablename__ = 'chassis_base'
+    DATA_TYPE_CHOICES = (
+        ('radiation_sound', '轮胎-胎面辐射声（轮胎选型）'),
+        ('peak_frequency', '轮胎-力传递峰值频率'),
+        ('force_transfer', '轮胎-力传递峰值'),
+        ('stability_performance', '轮胎-操稳性能'),
+        ('durability', '轮胎-耐久性能'),
+        ('rim_stiffness_a', '轮辋刚度-16-17’'),
+        ('rim_stiffness_b', '轮辋刚度-18-19’'),
+        ('full_bend_mode', '前副车架（自由-自由）-全副车架(bend)模态'),
+        ('half_bend_mode', '前副车架（自由-自由）-半副车架(bend)模态'),
+        ('torsion_beam', '后副车架（自由-自由）-类型一：扭转梁(bend)模态'),
+        ('multi_link', '后副车架（自由-自由）-类型二：多连杆(横梁弯曲)模态'),
+        ('tire_score', '轮胎总分')
+    )
 
     id = Column(INTEGER(11), primary_key=True)
 
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
-    radiation_sound = Column(Float, comment='轮胎-胎面辐射声（轮胎选型）')
-    peak_frequency = Column(Float, comment='轮胎-力传递峰值频率')
-    force_transfer = Column(Float, comment='轮胎-力传递峰值')
-    stability_performance = Column(Float, comment='轮胎-操稳性能')
-    durability = Column(Float, comment='轮胎-耐久性能')
-    rim_stiffness_a = Column(Float, comment='轮辋刚度-16-17’')
-    rim_stiffness_b = Column(Float, comment='轮辋刚度-18-19’')
-    full_bend_mode = Column(Float, comment='前副车架（自由-自由）-全副车架(bend)模态')
-    half_bend_mode = Column(Float, comment='前副车架（自由-自由）-半副车架(bend)模态')
-    torsion_beam = Column(Float, comment='后副车架（自由-自由）-类型一：扭转梁(bend)模态')
-    multi_link = Column(Float, comment='后副车架（自由-自由）-类型二：多连杆(横梁弯曲)模态')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    score = Column(Float(precision='10,2'), comment="分值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
@@ -139,37 +145,43 @@ class ChassisBase(Base):
 
 class ChassisDetail(Base):
     __tablename__ = 'chassis_detail'
+    DATA_TYPE_CHOICES = (
+        ('handling_x', '前下摆臂handling衬套-X向静刚度'),
+        ('handling_y', '前下摆臂handling衬套-Y向静刚度'),
+        ('handling_z', '前下摆臂handling衬套-Z向静刚度'),
+        ('handling_stability', '前下摆臂handling衬套-操稳性能'),
+        ('handling_durability', '前下摆臂handling衬套-耐久性能'),
+        ('ride_x', '前下摆臂ride衬套-X向静刚度'),
+        ('ride_y', '前下摆臂ride衬套-Y向静刚度'),
+        ('ride_z', '前下摆臂ride衬套-Z向静刚度'),
+        ('ride_stability', '前下摆臂ride衬套-操稳性能'),
+        ('ride_durability', '前下摆臂ride衬套-耐久性能'),
+        ('front_subframe_x', '后副车架前衬套-X向静刚度'),
+        ('front_subframe_y', '后副车架前衬套-Y向静刚度'),
+        ('front_subframe_z', '后副车架前衬套-Z向静刚度'),
+        ('front_subframe_stability', '后副车架前衬套-操稳性能'),
+        ('front_subframe_durability', '后副车架前衬套-耐久性能'),
+        ('backend_subframe_x', '后副车架后衬套-X向静刚度'),
+        ('backend_subframe_y', '后副车架后衬套-Y向静刚度'),
+        ('backend_subframe_z', '后副车架后衬套-Z向静刚度'),
+        ('backend_subframe_stability', '后副车架后衬套-操稳性能'),
+        ('backend_subframe_durability', '后副车架后衬套-耐久性能'),
+        ('blade_arm_x', '刀锋臂衬套-X向静刚度'),
+        ('blade_arm_y', '刀锋臂衬套-Y向静刚度'),
+        ('blade_arm_z', '刀锋臂衬套-Z向静刚度'),
+        ('blade_arm_stability', '刀锋臂衬套-操稳性能'),
+        ('blade_arm_durability', '刀锋臂衬套-耐久性能')
+    )
 
     id = Column(INTEGER(11), primary_key=True)
 
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
-
-    handling_x = Column(Float, comment='前下摆臂handling衬套-X向静刚度')
-    handling_y = Column(Float, comment='前下摆臂handling衬套-Y向静刚度')
-    handling_z = Column(Float, comment='前下摆臂handling衬套-Z向静刚度')
-    handling_stability = Column(Float, comment='前下摆臂handling衬套-操稳性能')
-    handling_durability = Column(Float, comment='前下摆臂handling衬套-耐久性能')
-    ride_x = Column(Float, comment='前下摆臂ride衬套-X向静刚度')
-    ride_y = Column(Float, comment='前下摆臂ride衬套-Y向静刚度')
-    ride_z = Column(Float, comment='前下摆臂ride衬套-Z向静刚度')
-    ride_stability = Column(Float, comment='前下摆臂ride衬套-操稳性能')
-    ride_durability = Column(Float, comment='前下摆臂ride衬套-耐久性能')
-    front_subframe_x = Column(Float, comment='后副车架前衬套-X向静刚度')
-    front_subframe_y = Column(Float, comment='后副车架前衬套-Y向静刚度')
-    front_subframe_z = Column(Float, comment='后副车架前衬套-Z向静刚度')
-    front_subframe_stability = Column(Float, comment='后副车架前衬套-操稳性能')
-    front_subframe_durability = Column(Float, comment='后副车架前衬套-耐久性能')
-    backend_subframe_x = Column(Float, comment='后副车架后衬套-X向静刚度')
-    backend_subframe_y = Column(Float, comment='后副车架后衬套-Y向静刚度')
-    backend_subframe_z = Column(Float, comment='后副车架后衬套-Z向静刚度')
-    backend_subframe_stability = Column(Float, comment='后副车架后衬套-操稳性能')
-    backend_subframe_durability = Column(Float, comment='后副车架后衬套-耐久性能')
-    blade_arm_x = Column(Float, comment='刀锋臂衬套-X向静刚度')
-    blade_arm_y = Column(Float, comment='刀锋臂衬套-Y向静刚度')
-    blade_arm_z = Column(Float, comment='刀锋臂衬套-Z向静刚度')
-    blade_arm_stability = Column(Float, comment='刀锋臂衬套-操稳性能')
-    blade_arm_durability = Column(Float, comment='刀锋臂衬套-耐久性能')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    molecule = Column(Float(precision='10,2'), comment="数据输入-分子")
+    denominator = Column(Float(precision='10,2'), comment="数据输入-分母")
+    stiffness_ratio = Column(Float(precision='10,2'), comment="刚度比，数据输入-分子/数据输入-分母")
+    score = Column(Float(precision='10,2'), comment="分值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
