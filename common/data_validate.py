@@ -99,7 +99,6 @@ class ExcelInfo(BaseModel):
 
 class SaveFreqData(BaseModel):
     save_type: str
-    active_car_id: int
     excel_info: List[ExcelInfo]
 
 

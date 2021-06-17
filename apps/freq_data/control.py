@@ -1,10 +1,11 @@
 import os
-from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData
+from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, CarExcelData
 from confs.config import UPLOAD_DIR
 import pandas as pd
 from datetime import datetime
 from common.common import get_orm_comment_dic
 import json
+from collections import defaultdict
 
 # 显示所有列
 pd.set_option('display.max_columns', None)
@@ -76,3 +77,30 @@ class SaveExcelData(object):
 
     def save_actual_test_data(self):
         self.common_method(ActualTestData)
+
+
+def get_current_car_excel_data(se, car_info):
+    car_excels = se.query(CarExcelData).filter(CarExcelData.car_info == car_info).all()
+    car_excels_dic = {data.data_type: data for data in car_excels}
+
+    ret_data = {}
+    for data_type, type_name in CarExcelData.DATA_TYPE_ITEMS:
+        car_excel_data = car_excels_dic.get(data_type)
+        excel_name, excel_path = None, None
+        if car_excel_data:
+            excel_name = car_excel_data.excel_name or ''
+            excel_path = car_excel_data.excel_path or ''
+        ret_data[data_type] = [{'name': excel_name, 'url': excel_path}] if excel_name else []
+    return ret_data
+
+
+def get_freq_data_car_selects(se):
+    car_excels = se.query(CarExcelData).all()
+    ret_data = defaultdict(list)
+    for car_excel in car_excels:
+        ret_data[f'{car_excel.data_type.code}_car_list'].append({
+            'id': car_excel.car_info_id,
+            'car_name': car_excel.car_info.car_name
+        })
+    ret_data = dict(ret_data)
+    return ret_data

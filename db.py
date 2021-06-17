@@ -466,8 +466,6 @@ class CarExcelData(Base):
     data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
     excel_name = Column(String(128), comment='excel文件名称')
     excel_path = Column(String(250), comment='excel文件路径')
-    active_id = Column(ForeignKey('car_excel_data.id'), comment="生效数据")
-    active = relationship('CarExcelData')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 

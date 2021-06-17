@@ -49,4 +49,6 @@ def download_modal(file_name):
 def download_file():
     req_data = data_validate.DownloadFileParams(**request.args.to_dict())
     full_path = os.path.join(UPLOAD_DIR, req_data.fp)
+    if not os.path.exists(full_path):
+        return JsonResponse.fail('文件不存在')
     return send_file(full_path)
