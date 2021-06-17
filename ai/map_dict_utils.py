@@ -77,7 +77,7 @@ def ntf_score(x):
         return 5
     elif 65 <= x < 70:
         return 4
-    elif x >= 70 :
+    elif x >= 70:
         return 1
 
 
@@ -96,7 +96,7 @@ def spindle_ntf_score(x):
         return 5
     elif 45 <= x < 50:
         return 4
-    elif 50 <= x < 55 :
+    elif 50 <= x < 55:
         return 3
     elif x >= 55:
         return 1

@@ -10,7 +10,81 @@ import pandas as pd
 import numpy as np
 from ai.map_dict_utils import *
 from ai.hyper_parmas import div_hyper_params
+from ai.single_params import fuchejia, xiabaibi, cheshen
+from bisect import bisect_left, bisect_right
 
+def single_fuchejia_all_func(data_map):
+    '''
+    data_map: dict
+              {'key1':'value1','key2':'value2', ...}
+    '''
+    score = 0.0
+    for key, value in data_map.items():
+        score += 0.2 * float(value)
+
+    return score
+
+def get_loc(i, li):
+    for index, value in enumerate(li):
+        if i < value:
+            return index
+        else:
+            return index + 1
+
+def single_fuchejia_func(key, value):
+    '''
+    key: name1_name2
+    value: input value
+    '''
+
+    thres_array = fuchejia[key][0]
+    score = fuchejia[key][1]
+    # index = get_loc(value, thres_array)
+
+    index = bisect_left(thres_array, value)
+    # index = bisect_right(thres_array, value)
+
+    if index < len(score):
+        return score[index]
+    else:
+        return 'error'
+
+
+def single_xiabaibi_func(key, value):
+    '''
+    key: name1_name2
+    value: input value
+    '''
+
+    thres_array = xiabaibi[key][0]
+    score = xiabaibi[key][1]
+    # index = get_loc(value, thres_array)
+
+    index = bisect_left(thres_array, value)
+    # index = bisect_right(thres_array, value)
+
+    if index < len(score):
+        return score[index]
+    else:
+        return 'error'
+
+def single_cheshen_func(key, value):
+    '''
+    key: name1_name2
+    value: input value
+    '''
+
+    thres_array = cheshen[key][0]
+    score = cheshen[key][1]
+    # index = get_loc(value, thres_array)
+
+    index = bisect_left(thres_array, value)
+    # index = bisect_right(thres_array, value)
+
+    if index < len(score):
+        return score[index]
+    else:
+        return 'error'
 def single_predict_func(data_map):
     '''
     data_map: dict
