@@ -73,28 +73,23 @@ def single_cheshen_func(key, value):
     key: name1_name2
     value: input value
     '''
-
-    thres_array = cheshen[key][0]
-    score = cheshen[key][1]
-    # index = get_loc(value, thres_array)
-
-    index = bisect_left(thres_array, value)
-    # index = bisect_right(thres_array, value)
-
-    if index < len(score):
-        return score[index]
+    if 'Check' in key:
+        if value in cheshen[key].keys():
+            return cheshen[key][value]
+        else:
+            return 'error'
     else:
-        return 'error'
-def single_predict_func(data_map):
-    '''
-    data_map: dict
-              {'key1':'value1','key2':'value2', ...}
-    '''
-    score = 0.0
-    for key, value in data_map.items():
-        score += 0.2 * float(value)
-        
-    return score
+        thres_array = cheshen[key][0]
+        score = cheshen[key][1]
+        # index = get_loc(value, thres_array)
+
+        index = bisect_left(thres_array, value)
+        # index = bisect_right(thres_array, value)
+
+        if index < len(score):
+            return score[index]
+        else:
+            return 'error'
 
 def dstiff_colourmap(ori_df):
     '''
