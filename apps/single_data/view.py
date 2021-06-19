@@ -3,6 +3,7 @@ from common.common import JsonResponse, login_required, view_exception
 from db import CarInfo, ChassisBase, ChassisDetail
 from common import data_validate
 from datetime import datetime
+from ai.noise_algo_func import single_predict_func
 
 bp = Blueprint('single_data', __name__, url_prefix='/api/v1/single_data/')
 
@@ -15,16 +16,38 @@ def get_chassis_info(se):
     if not car_info:
         return JsonResponse.fail('请先设置当前车型')
 
-    chassis_base = se.query(ChassisBase).filter(ChassisBase.car_info == car_info).first()
-    chassis_detail = se.query(ChassisDetail).filter(ChassisDetail.car_info == car_info).first()
+    chassis_bases = se.query(ChassisBase).filter(ChassisBase.car_info == car_info)
+    chassis_details = se.query(ChassisDetail).filter(ChassisDetail.car_info == car_info)
 
-    chassis_base_info = {}
-    chassis_detail_info = {}
-    if chassis_base:
-        chassis_base_info = chassis_base.to_dict()
-    if chassis_detail:
-        chassis_detail_info = chassis_detail.to_dict()
-
+    chassis_base_info = {
+        data_type: {
+            'value': 0, 'score': 0
+        } if data_type != 'tire_score' else 0 for data_type, type_name in ChassisBase.DATA_TYPE_CHOICES
+    }
+    chassis_detail_info = {
+        data_type: {
+            'molecule': 0, 'denominator': 0, 'stiffness_ratio': 0, 'score': 0
+        } for data_type, type_name in ChassisDetail.DATA_TYPE_CHOICES
+    }
+    for chassis_base in chassis_bases:
+        if chassis_base.data_type == 'tire_score':
+            chassis_base_info['tire_score'] = chassis_base.value
+            continue
+        chassis_base_info.update({
+            chassis_base.data_type: {
+                'value': chassis_base.value,
+                'score': chassis_base.score
+            }
+        })
+    for chassis_detail in chassis_details:
+        chassis_detail_info.update({
+            chassis_detail.data_type: {
+                'molecule': chassis_detail.molecule,
+                'denominator': chassis_detail.denominator,
+                'stiffness_ratio': chassis_detail.stiffness_ratio,
+                'score': chassis_detail.score,
+            }
+        })
     ret_data = {
         'chassis_base_info': chassis_base_info,
         'chassis_detail_info': chassis_detail_info
@@ -41,26 +64,27 @@ def update_chassis_info(se):
     if not car_info:
         return JsonResponse.fail('请先设置当前车型')
 
-    chassis_base_info = req_data.chassis_base_info.dict()
-    chassis_detail_info = req_data.chassis_detail_info.dict()
+    chassis_base_info = req_data.chassis_base_info
+    chassis_detail_info = req_data.chassis_detail_info
     now = datetime.now()
-    chassis_base_info['update_time'] = now
-    chassis_detail_info['update_time'] = now
-    chassis_base = se.query(ChassisBase).filter(ChassisBase.car_info == car_info)
-    chassis_detail = se.query(ChassisDetail).filter(ChassisDetail.car_info == car_info)
-    if chassis_base.first():
-        chassis_base.update(chassis_base_info)
-    else:
-        chassis_base_info['create_time'] = now
-        chassis_base_info['car_info'] = car_info
-        se.add(ChassisBase(**chassis_base_info))
+    insert_list = []
+    for data_type, cb_obj in chassis_base_info:
+        insert_list.append(ChassisBase(
+            data_type=data_type, value=cb_obj.value, score=cb_obj.value,
+            update_time=now, create_time=now, car_info=car_info
+        ))
+    se.query(ChassisBase).filter(ChassisBase.car_info == car_info).delete()
+    se.add_all(insert_list)
 
-    if chassis_detail.first():
-        chassis_detail.update(chassis_detail_info)
-    else:
-        chassis_detail_info['create_time'] = now
-        chassis_detail_info['car_info'] = car_info
-        se.add(ChassisDetail(**chassis_detail_info))
+    insert_list = []
+    for data_type, cd_obj in chassis_detail_info:
+        insert_list.append(ChassisDetail(
+            data_type=data_type, molecule=cd_obj.molecule, denominator=cd_obj.denominator,
+            stiffness_ratio=cd_obj.stiffness_ratio, score=cd_obj.score,
+            update_time=now, create_time=now, car_info=car_info
+        ))
+    se.query(ChassisDetail).filter(ChassisDetail.car_info == car_info).delete()
+    se.add_all(insert_list)
     se.commit()
     return JsonResponse.success()
 
@@ -70,4 +94,30 @@ def update_chassis_info(se):
 @view_exception(fail_msg='calculate_tire_score failed')
 def calculate_tire_score():
     req_data = data_validate.ChassisBaseValidate(**request.json)
-    return JsonResponse.success()
+    cal_src_data = {data_type: base_obj.value for data_type, base_obj in req_data if data_type != 'tire_score'}
+    ret_num = round(single_predict_func(cal_src_data), 2)
+    return JsonResponse.success(ret_num)
+
+
+@bp.route('cal_base_score', methods=['POST'])
+@login_required
+@view_exception(fail_msg='cal_base_score failed')
+def cal_base_score():
+    req_data = data_validate.CalculateBaseScore(**request.json)
+    return JsonResponse.success(req_data.num)
+
+
+@bp.route('cal_detail_score', methods=['POST'])
+@login_required
+@view_exception(fail_msg='cal_detail_score failed')
+def cal_detail_score():
+    req_data = data_validate.CalculateDetailScore(**request.json)
+    if req_data.denominator == 0:
+        stiffness_ratio = 0
+    else:
+        stiffness_ratio = round(req_data.molecule / req_data.denominator, 2)
+    ret_data = {
+        'stiffness_ratio': stiffness_ratio,
+        'score': stiffness_ratio
+    }
+    return JsonResponse.success(ret_data)

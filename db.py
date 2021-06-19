@@ -128,6 +128,7 @@ class ChassisBase(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    value = Column(Float(precision='10,2'), comment="值")
     score = Column(Float(precision='10,2'), comment="分值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -135,12 +136,6 @@ class ChassisBase(Base):
     __table_args__ = (
         {'comment': '底盘-基本信息'}
     )
-
-    def to_dict(self):
-        return {
-            c.name: getattr(self, c.name) for c in self.__table__.columns
-            if c.name not in ['update_time', 'create_time', 'id']
-        }
 
 
 class ChassisDetail(Base):
