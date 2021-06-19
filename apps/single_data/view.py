@@ -1,5 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, Response
 from common.common import JsonResponse, login_required, view_exception
+from apps.single_data.control import ExportSingleData
 from db import CarInfo, ChassisBase, ChassisDetail
 from common import data_validate
 from datetime import datetime
@@ -70,7 +71,7 @@ def update_chassis_info(se):
     insert_list = []
     for data_type, cb_obj in chassis_base_info:
         insert_list.append(ChassisBase(
-            data_type=data_type, value=cb_obj.value, score=cb_obj.value,
+            data_type=data_type, value=cb_obj.value, score=cb_obj.score,
             update_time=now, create_time=now, car_info=car_info
         ))
     se.query(ChassisBase).filter(ChassisBase.car_info == car_info).delete()
@@ -121,3 +122,19 @@ def cal_detail_score():
         'score': stiffness_ratio
     }
     return JsonResponse.success(ret_data)
+
+
+@bp.route('export_data', methods=['GET'])
+@login_required
+@view_exception(fail_msg='export_single_data failed', db_session=True)
+def export_single_data(se):
+    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
+    if not car_info:
+        return JsonResponse.fail('请先设置当前车型')
+
+    export_data_obj = ExportSingleData(se, car_info)
+    ret_value = export_data_obj.export()
+
+    response = Response(ret_value, content_type='application/octet-stream')
+    response.headers['Content-Disposition'] = 'attachment;filename="{0}"'.format('单值数据.xls'.encode().decode("latin1"))
+    return response

@@ -129,4 +129,35 @@ class CalculateDetailScore(BaseModel):
     cal_type: str
     molecule: float
     denominator: float
+    
+
+class SingleCarBodyObj(BaseModel):
+    value: str = Field(default=None, description='值')
+    score: float = Field(description='分值')
+
+    
+class SaveCarBodyData(BaseModel):
+    biw_gtmf: SingleCarBodyObj = Field(description='白车身 -- 全局扭转模态频率')
+    biw_gbmf: SingleCarBodyObj = Field(description='白车身 -- 全局弯曲模态频率')
+    cring_vc: SingleCarBodyObj = Field(description='C ring -- Visual Check')
+    fwall_lps: SingleCarBodyObj = Field(description='前围 -- 大板刚度')
+    no1_beam_vc: SingleCarBodyObj = Field(description='一号梁 -- Visual Check')
+    floor_lps: SingleCarBodyObj = Field(description='地板 -- 大板刚度')
+    fawsp_vc: SingleCarBodyObj = Field(description='地板无支撑板面积 -- Visual Check')
+    swcf_lps: SingleCarBodyObj = Field(description='备胎舱地板 -- 大板刚度')
+    dorpfswc_vc: SingleCarBodyObj = Field(description='备胎舱加强板设计 -- Visual Check')
+    ceiling_lps: SingleCarBodyObj = Field(description='顶棚 -- 大板刚度')
+    ceiling_st_vc: SingleCarBodyObj = Field(description='顶棚结构 -- Visual Check')
+    lwhip_lps: SingleCarBodyObj = Field(description='左轮罩内板 -- 大板刚度')
+    rsarp_vc: SingleCarBodyObj = Field(description='后减震器加强板 -- Visual Check')
+    rwhip_lps: SingleCarBodyObj = Field(description='右轮罩内板 -- 大板刚度')
+    rsop_lps: SingleCarBodyObj = Field(description='后侧围外板 -- 大板刚度')
+    coat_rack_lps: SingleCarBodyObj = Field(description='衣帽架 -- 大板刚度')
+    flume_lps: SingleCarBodyObj = Field(description='落水槽 -- 大板刚度')
+    dotsotwt_vc: SingleCarBodyObj = Field(description='落水槽支架设计 -- Visual Check')
+
+
+class CalculateCarBodyScore(BaseModel):
+    cal_type: str
+    value: str
 

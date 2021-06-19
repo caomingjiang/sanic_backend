@@ -109,17 +109,17 @@ class CarTestInfo(Base):
 class ChassisBase(Base):
     __tablename__ = 'chassis_base'
     DATA_TYPE_CHOICES = (
-        ('radiation_sound', '轮胎-胎面辐射声（轮胎选型）'),
-        ('peak_frequency', '轮胎-力传递峰值频率'),
-        ('force_transfer', '轮胎-力传递峰值'),
-        ('stability_performance', '轮胎-操稳性能'),
-        ('durability', '轮胎-耐久性能'),
-        ('rim_stiffness_a', '轮辋刚度-16-17’'),
-        ('rim_stiffness_b', '轮辋刚度-18-19’'),
-        ('full_bend_mode', '前副车架（自由-自由）-全副车架(bend)模态'),
-        ('half_bend_mode', '前副车架（自由-自由）-半副车架(bend)模态'),
-        ('torsion_beam', '后副车架（自由-自由）-类型一：扭转梁(bend)模态'),
-        ('multi_link', '后副车架（自由-自由）-类型二：多连杆(横梁弯曲)模态'),
+        ('radiation_sound', '轮胎 -- 胎面辐射声（轮胎选型）'),
+        ('peak_frequency', '轮胎 -- 力传递峰值频率'),
+        ('force_transfer', '轮胎 -- 力传递峰值'),
+        ('stability_performance', '轮胎 -- 操稳性能'),
+        ('durability', '轮胎 -- 耐久性能'),
+        ('rim_stiffness_a', '轮辋刚度 -- 16-17’'),
+        ('rim_stiffness_b', '轮辋刚度 -- 18-19’'),
+        ('full_bend_mode', '前副车架（自由-自由） -- 全副车架(bend)模态'),
+        ('half_bend_mode', '前副车架（自由-自由） -- 半副车架(bend)模态'),
+        ('torsion_beam', '后副车架（自由-自由） -- 类型一：扭转梁(bend)模态'),
+        ('multi_link', '后副车架（自由-自由） -- 类型二：多连杆(横梁弯曲)模态'),
         ('tire_score', '轮胎总分')
     )
 
@@ -141,31 +141,31 @@ class ChassisBase(Base):
 class ChassisDetail(Base):
     __tablename__ = 'chassis_detail'
     DATA_TYPE_CHOICES = (
-        ('handling_x', '前下摆臂handling衬套-X向静刚度'),
-        ('handling_y', '前下摆臂handling衬套-Y向静刚度'),
-        ('handling_z', '前下摆臂handling衬套-Z向静刚度'),
-        ('handling_stability', '前下摆臂handling衬套-操稳性能'),
-        ('handling_durability', '前下摆臂handling衬套-耐久性能'),
-        ('ride_x', '前下摆臂ride衬套-X向静刚度'),
-        ('ride_y', '前下摆臂ride衬套-Y向静刚度'),
-        ('ride_z', '前下摆臂ride衬套-Z向静刚度'),
-        ('ride_stability', '前下摆臂ride衬套-操稳性能'),
-        ('ride_durability', '前下摆臂ride衬套-耐久性能'),
-        ('front_subframe_x', '后副车架前衬套-X向静刚度'),
-        ('front_subframe_y', '后副车架前衬套-Y向静刚度'),
-        ('front_subframe_z', '后副车架前衬套-Z向静刚度'),
-        ('front_subframe_stability', '后副车架前衬套-操稳性能'),
-        ('front_subframe_durability', '后副车架前衬套-耐久性能'),
-        ('backend_subframe_x', '后副车架后衬套-X向静刚度'),
-        ('backend_subframe_y', '后副车架后衬套-Y向静刚度'),
-        ('backend_subframe_z', '后副车架后衬套-Z向静刚度'),
-        ('backend_subframe_stability', '后副车架后衬套-操稳性能'),
-        ('backend_subframe_durability', '后副车架后衬套-耐久性能'),
-        ('blade_arm_x', '刀锋臂衬套-X向静刚度'),
-        ('blade_arm_y', '刀锋臂衬套-Y向静刚度'),
-        ('blade_arm_z', '刀锋臂衬套-Z向静刚度'),
-        ('blade_arm_stability', '刀锋臂衬套-操稳性能'),
-        ('blade_arm_durability', '刀锋臂衬套-耐久性能')
+        ('handling_x', '前下摆臂handling衬套 -- X向静刚度'),
+        ('handling_y', '前下摆臂handling衬套 -- Y向静刚度'),
+        ('handling_z', '前下摆臂handling衬套 -- Z向静刚度'),
+        ('handling_stability', '前下摆臂handling衬套 -- 操稳性能'),
+        ('handling_durability', '前下摆臂handling衬套 -- 耐久性能'),
+        ('ride_x', '前下摆臂ride衬套 -- X向静刚度'),
+        ('ride_y', '前下摆臂ride衬套 -- Y向静刚度'),
+        ('ride_z', '前下摆臂ride衬套 -- Z向静刚度'),
+        ('ride_stability', '前下摆臂ride衬套 -- 操稳性能'),
+        ('ride_durability', '前下摆臂ride衬套 -- 耐久性能'),
+        ('front_subframe_x', '后副车架前衬套 -- X向静刚度'),
+        ('front_subframe_y', '后副车架前衬套 -- Y向静刚度'),
+        ('front_subframe_z', '后副车架前衬套 -- Z向静刚度'),
+        ('front_subframe_stability', '后副车架前衬套 -- 操稳性能'),
+        ('front_subframe_durability', '后副车架前衬套 -- 耐久性能'),
+        ('backend_subframe_x', '后副车架后衬套 -- X向静刚度'),
+        ('backend_subframe_y', '后副车架后衬套 -- Y向静刚度'),
+        ('backend_subframe_z', '后副车架后衬套 -- Z向静刚度'),
+        ('backend_subframe_stability', '后副车架后衬套 -- 操稳性能'),
+        ('backend_subframe_durability', '后副车架后衬套 -- 耐久性能'),
+        ('blade_arm_x', '刀锋臂衬套 -- X向静刚度'),
+        ('blade_arm_y', '刀锋臂衬套 -- Y向静刚度'),
+        ('blade_arm_z', '刀锋臂衬套 -- Z向静刚度'),
+        ('blade_arm_stability', '刀锋臂衬套 -- 操稳性能'),
+        ('blade_arm_durability', '刀锋臂衬套 -- 耐久性能')
     )
 
     id = Column(INTEGER(11), primary_key=True)
@@ -479,6 +479,44 @@ class CarExcelData(Base):
     __table_args__ = (
         Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
         {'comment': '车型excel对应表'}
+    )
+
+
+class CarBody(Base):
+    __tablename__ = 'car_body'
+    DATA_TYPE_CHOICES = (
+        ('biw_gtmf', '白车身 -- 全局扭转模态频率'),
+        ('biw_gbmf', '白车身 -- 全局弯曲模态频率'),
+        ('cring_vc', 'C ring -- Visual Check'),
+        ('fwall_lps', '前围 -- 大板刚度'),
+        ('no1_beam_vc', '一号梁 -- Visual Check'),
+        ('floor_lps', '地板 -- 大板刚度'),
+        ('fawsp_vc', '地板无支撑板面积 -- Visual Check'),
+        ('swcf_lps', '备胎舱地板 -- 大板刚度'),
+        ('dorpfswc_vc', '备胎舱加强板设计 -- Visual Check'),
+        ('ceiling_lps', '顶棚 -- 大板刚度'),
+        ('ceiling_st_vc', '顶棚结构 -- Visual Check'),
+        ('lwhip_lps', '左轮罩内板 -- 大板刚度'),
+        ('rsarp_vc', '后减震器加强板 -- Visual Check'),
+        ('rwhip_lps', '右轮罩内板 -- 大板刚度'),
+        ('rsop_lps', '后侧围外板 -- 大板刚度'),
+        ('coat_rack_lps', '衣帽架 -- 大板刚度'),
+        ('flume_lps', '落水槽 -- 大板刚度'),
+        ('dotsotwt_vc', '落水槽支架设计 -- Visual Check'),
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    value = Column(String(128), comment="值")
+    score = Column(Float(precision='10,2'), comment="分值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        {'comment': '单值数据-车身'}
     )
 
 
