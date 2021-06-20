@@ -10,7 +10,6 @@ import pandas as pd
 import numpy as np
 from ai.map_dict_utils import *
 from ai.hyper_parmas import div_hyper_params
-from ai.single_params import fuchejia, xiabaibi, cheshen
 from bisect import bisect_left, bisect_right
 
 def single_fuchejia_all_func(data_map):
