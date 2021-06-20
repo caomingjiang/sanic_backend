@@ -31,10 +31,11 @@ def get_loc(i, li):
         else:
             return index + 1
 
-def single_fuchejia_func(key, value):
+def single_fuchejia_func(key, value, fuchejia):
     '''
     key: name1_name2
     value: input value
+    fuchejia: fuchejia single parmas
     '''
 
     thres_array = fuchejia[key][0]
@@ -50,10 +51,11 @@ def single_fuchejia_func(key, value):
         return 'error'
 
 
-def single_xiabaibi_func(key, value):
+def single_xiabaibi_func(key, value, xiabaibi):
     '''
     key: name1_name2
     value: input value
+    xiabaibi: xiabaibi single params
     '''
 
     thres_array = xiabaibi[key][0]
@@ -68,10 +70,11 @@ def single_xiabaibi_func(key, value):
     else:
         return 'error'
 
-def single_cheshen_func(key, value):
+def single_cheshen_func(key, value, cheshen):
     '''
     key: name1_name2
     value: input value
+    cheshen: cheshen single params
     '''
     if 'Check' in key:
         if value in cheshen[key].keys():
