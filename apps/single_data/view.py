@@ -4,7 +4,7 @@ from apps.single_data.control import ExportSingleData
 from db import CarInfo, ChassisBase, ChassisDetail
 from common import data_validate
 from datetime import datetime
-from ai.noise_algo_func import single_predict_func
+from ai.noise_algo_func import single_fuchejia_all_func
 
 bp = Blueprint('single_data', __name__, url_prefix='/api/v1/single_data/')
 
@@ -96,7 +96,7 @@ def update_chassis_info(se):
 def calculate_tire_score():
     req_data = data_validate.ChassisBaseValidate(**request.json)
     cal_src_data = {data_type: base_obj.value for data_type, base_obj in req_data if data_type != 'tire_score'}
-    ret_num = round(single_predict_func(cal_src_data), 2)
+    ret_num = round(single_fuchejia_all_func(cal_src_data), 2)
     return JsonResponse.success(ret_num)
 
 

@@ -286,6 +286,63 @@ class Dstiff(Base):
         return ret_data
 
 
+class ColorMapDstiff(Base):
+    __tablename__ = 'c_color_map_dstiff'
+
+    DATA_TYPE_ITEMS = [
+        ('frequency_range', '频率范围'),
+        ('fsb_ap_x', '前悬左塔座接附点X'),
+        ('fsb_ap_y', '前悬左塔座接附点Y'),
+        ('fsb_ap_z', '前悬左塔座接附点Z'),
+        ('fslca_fap_x', '前悬左控制臂前接附点X'),
+        ('fslca_fap_y', '前悬左控制臂前接附点Y'),
+        ('fslca_fap_z', '前悬左控制臂前接附点Z'),
+        ('fslca_rap_x', '前悬左控制臂后接附点X'),
+        ('fslca_rap_y', '前悬左控制臂后接附点Y'),
+        ('fslca_rap_z', '前悬左控制臂后接附点Z'),
+        ('lba_ap_x', '左刀锋臂接附点X'),
+        ('lba_ap_y', '左刀锋臂接附点Y'),
+        ('lba_ap_z', '左刀锋臂接附点Z'),
+        ('rslsa_ap_x', '后悬左减震接附点X'),
+        ('rslsa_ap_y', '后悬左减震接附点Y'),
+        ('rslsa_ap_z', '后悬左减震接附点Z'),
+        ('rsls_ap_x', '后悬左弹簧接附点X'),
+        ('rsls_ap_y', '后悬左弹簧接附点Y'),
+        ('rsls_ap_z', '后悬左弹簧接附点Z'),
+        ('rsluca_ap_x', '后悬左上控制臂接附点X'),
+        ('rsluca_ap_y', '后悬左上控制臂接附点Y'),
+        ('rsluca_ap_z', '后悬左上控制臂接附点Z'),
+        ('rslll_ap_x', '后悬左下拉杆接附点X'),
+        ('rslll_ap_y', '后悬左下拉杆接附点Y'),
+        ('rslll_ap_z', '后悬左下拉杆接附点Z'),
+        ('rslsai_ap_x', '后悬左弹簧臂内接附点X'),
+        ('rslsai_ap_y', '后悬左弹簧臂内接附点Y'),
+        ('rslsai_ap_z', '后悬左弹簧臂内接附点Z'),
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    value = Column(Float, nullable=False, comment="权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        {'comment': 'ColorMap Dstiff表'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+            ret_data[type_name] = data_type
+        return ret_data
+
+
 class NtfDr(Base):
     __tablename__ = 'd_ntf_dr'
     id = Column(INTEGER(11), primary_key=True)
@@ -328,6 +385,63 @@ class NtfDr(Base):
         Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
         {'comment': 'NtfDr表'}
     )
+
+
+class ColorMapNtfDr(Base):
+    __tablename__ = 'c_color_map_ntf_dr'
+
+    DATA_TYPE_ITEMS = [
+        ('frequency_range', '频率范围'),
+        ('fslftt_driver_x', '前悬左前塔座到DriverX'),
+        ('fslftt_driver_y', '前悬左前塔座到DriverY'),
+        ('fslftt_driver_z', '前悬左前塔座到DriverZ'),
+        ('fslfca_driver_x', '前悬左前控制臂到DriverX'),
+        ('fslfca_driver_y', '前悬左前控制臂到DriverY'),
+        ('fslfca_driver_z', '前悬左前控制臂到DriverZ'),
+        ('fslrca_driver_x', '前悬左后控制臂到DriverX'),
+        ('fslrca_driver_y', '前悬左后控制臂到DriverY'),
+        ('fslrca_driver_z', '前悬左后控制臂到DriverZ'),
+        ('lba_driver_x', '左刀锋臂到DriverX'),
+        ('lba_driver_y', '左刀锋臂到DriverY'),
+        ('lba_driver_z', '左刀锋臂到DriverZ'),
+        ('rslrsa_diver_x', '后悬左后减振器到DriverX'),
+        ('rslrsa_diver_y', '后悬左后减振器到DriverY'),
+        ('rslrsa_diver_z', '后悬左后减振器到DriverZ'),
+        ('rslrss_driver_x', '后悬左后弹簧座到DriverX'),
+        ('rslrss_driver_y', '后悬左后弹簧座到DriverY'),
+        ('rslrss_driver_z', '后悬左后弹簧座到DriverZ'),
+        ('rsulca_driver_x', '后悬左上控制臂到DriverX'),
+        ('rsulca_driver_y', '后悬左上控制臂到DriverY'),
+        ('rsulca_driver_z', '后悬左上控制臂到DriverZ'),
+        ('rlll_driver_x', '后悬左下拉杆到DriverX'),
+        ('rlll_driver_y', '后悬左下拉杆到DriverY'),
+        ('rlll_driver_z', '后悬左下拉杆到DriverZ'),
+        ('rslsa_driver_x', '后悬左弹簧托臂到DriverX'),
+        ('rslsa_driver_y', '后悬左弹簧托臂到DriverY'),
+        ('rslsa_driver_z', '后悬左弹簧托臂到DriverZ'),
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    value = Column(Float, nullable=False, comment="权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        {'comment': 'ColorMap NtfDr表'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+            ret_data[type_name] = data_type
+        return ret_data
 
 
 class NtfRr(Base):
@@ -375,6 +489,63 @@ class NtfRr(Base):
     )
 
 
+class ColorMapNtfRr(Base):
+    __tablename__ = 'c_color_map_ntf_rr'
+
+    DATA_TYPE_ITEMS = [
+        ('frequency_range', '频率范围'),
+        ('fslft_passenger_x', '前悬左前塔座到PassengerX'),
+        ('fslft_passenger_y', '前悬左前塔座到PassengerY'),
+        ('fslft_passenger_z', '前悬左前塔座到PassengerZ'),
+        ('fslfca_passenger_x', '前悬左前控制臂到PassengerX'),
+        ('fslfca_passenger_y', '前悬左前控制臂到PassengerY'),
+        ('fslfca_passenger_z', '前悬左前控制臂到PassengerZ'),
+        ('fslrca_passenger_x', '前悬左后控制臂到PassengerX'),
+        ('fslrca_passenger_y', '前悬左后控制臂到PassengerY'),
+        ('fslrca_passenger_z', '前悬左后控制臂到PassengerZ'),
+        ('lba_passenger_x', '左刀锋臂到PassengerX'),
+        ('lba_passenger_y', '左刀锋臂到PassengerY'),
+        ('lba_passenger_z', '左刀锋臂到PassengerZ'),
+        ('rslrsa_passenger_x', '后悬左后减振器到PassengerX'),
+        ('rslrsa_passenger_y', '后悬左后减振器到PassengerY'),
+        ('rslrsa_passenger_z', '后悬左后减振器到PassengerZ'),
+        ('rslrss_passenger_x', '后悬左后弹簧座到PassengerX'),
+        ('rslrss_passenger_y', '后悬左后弹簧座到PassengerY'),
+        ('rslrss_passenger_z', '后悬左后弹簧座到PassengerZ'),
+        ('rsluca_passenger_x', '后悬左上控制臂到PassengerX'),
+        ('rsluca_passenger_y', '后悬左上控制臂到PassengerY'),
+        ('rsluca_passenger_z', '后悬左上控制臂到PassengerZ'),
+        ('rlll_passenger_x', '后悬左下拉杆到PassengerX'),
+        ('rlll_passenger_y', '后悬左下拉杆到PassengerY'),
+        ('rlll_passenger_z', '后悬左下拉杆到PassengerZ'),
+        ('rslsa_passenger_x', '后悬左弹簧托臂到PassengerX'),
+        ('rslsa_passenger_y', '后悬左弹簧托臂到PassengerY'),
+        ('rslsa_passenger_z', '后悬左弹簧托臂到PassengerZ')
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    value = Column(Float, nullable=False, comment="权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        {'comment': 'ColorMap NtfRr表'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+            ret_data[type_name] = data_type
+        return ret_data
+
+
 class SpindleNtfDr(Base):
     __tablename__ = 'd_spindle_ntf_dr'
     id = Column(INTEGER(11), primary_key=True)
@@ -405,6 +576,48 @@ class SpindleNtfDr(Base):
     )
 
 
+class ColorMapSpindleNtfDr(Base):
+    __tablename__ = 'c_color_map_spindle_ntf_dr'
+
+    DATA_TYPE_ITEMS = [
+        ('frequency_range', '频率范围'),
+        ('lfwc_driver_x', '左前轮心_DriverX'),
+        ('lfwc_driver_y', '左前轮心_DriverY'),
+        ('lfwc_driver_z', '左前轮心_DriverZ'),
+        ('rfwc_driver_x', '右前轮心_DriverX'),
+        ('rfwc_driver_y', '右前轮心_DriverY'),
+        ('rfwc_driver_z', '右前轮心_DriverZ'),
+        ('lrwh_driver_x', '左后轮心_DriverX'),
+        ('lrwh_driver_y', '左后轮心_DriverY'),
+        ('lrwh_driver_z', '左后轮心_DriverZ'),
+        ('rrwc_driver_x', '右后轮心_DriverX'),
+        ('rrwc_driver_y', '右后轮心_DriverY'),
+        ('rrwc_driver_z', '右后轮心_DriverZ')
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    value = Column(Float, nullable=False, comment="权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        {'comment': 'ColorMap SpindleNtfDr表'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+            ret_data[type_name] = data_type
+        return ret_data
+
+
 class SpindleNtfRr(Base):
     __tablename__ = 'd_spindle_ntf_rr'
     id = Column(INTEGER(11), primary_key=True)
@@ -433,6 +646,48 @@ class SpindleNtfRr(Base):
         Index('car_info_frequency', 'car_info_id', 'frequency', unique=True),
         {'comment': 'SpindleNtfRr表'}
     )
+
+
+class ColorMapSpindleNtfRr(Base):
+    __tablename__ = 'c_color_map_spindle_ntf_rr'
+
+    DATA_TYPE_ITEMS = [
+        ('frequency_range', '频率范围'),
+        ('lfwc_rrx', '左前轮心_RRX'),
+        ('lfwc_rry', '左前轮心_RRY'),
+        ('lfwc_rrz', '左前轮心_RRZ'),
+        ('rfwc_rrx', '右前轮心_RRX'),
+        ('rfwc_rry', '右前轮心_RRY'),
+        ('rfwc_rrz', '右前轮心_RRZ'),
+        ('lrwh_rrx', '左后轮心_RRX'),
+        ('lrwh_rry', '左后轮心_RRY'),
+        ('lrwh_rrz', '左后轮心_RRZ'),
+        ('rrwc_rrx', '右后轮心_RRX'),
+        ('rrwc_rry', '右后轮心_RRY'),
+        ('rrwc_rrz', '右后轮心_RRZ')
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    value = Column(Float, nullable=False, comment="权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        {'comment': 'ColorMap SpindleNtfRr表'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+            ret_data[type_name] = data_type
+        return ret_data
 
 
 class ActualTestData(Base):

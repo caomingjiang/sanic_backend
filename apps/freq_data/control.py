@@ -1,11 +1,13 @@
 import os
-from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, CarExcelData
+from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, CarExcelData, \
+    ColorMapDstiff, ColorMapNtfDr, ColorMapNtfRr, ColorMapSpindleNtfDr, ColorMapSpindleNtfRr
 from confs.config import UPLOAD_DIR
 import pandas as pd
 from datetime import datetime
 from common.common import get_orm_comment_dic
 import json
 from collections import defaultdict
+from ai.noise_algo_func import dstiff_colourmap, ntf_colourmap
 
 # 显示所有列
 pd.set_option('display.max_columns', None)
@@ -60,20 +62,46 @@ class SaveExcelData(object):
         df.rename(columns=comment_dic, inplace=True)
         self.common_update(df, ModalMap)
 
+    def save_color_map(self, table_model, ai_method, ntf_str='ntf', dstiff=False):
+        df = pd.read_excel(self.full_excel_path)
+        if dstiff:
+            ret_df = ai_method(df)
+        else:
+            ret_df = ai_method(df, ntf_str)
+        ret_df.set_index('频率', inplace=True)
+        comment_dic = table_model.comment_dic()
+        insert_list = []
+        now = datetime.now()
+        for index in ret_df.index:
+            for type_name, value in ret_df.loc[index].to_dict().items():
+                single_add = {
+                    'car_info_id': self.car_id, 'frequency_range': index, 'data_type': comment_dic[type_name],
+                    'value': int(value), 'update_time': now, 'create_time': now
+                }
+                insert_list.append(table_model(**single_add))
+        self.se.query(table_model).filter(table_model.car_info_id == self.car_id).delete()
+        self.se.add_all(insert_list)
+        self.se.commit()
+
     def save_dstiff(self):
         self.common_method(Dstiff)
+        self.save_color_map(ColorMapDstiff, dstiff_colourmap, dstiff=True)
 
     def save_ntf_dr(self):
         self.common_method(NtfDr)
+        self.save_color_map(ColorMapNtfDr, ntf_colourmap, ntf_str='ntf')
 
     def save_ntf_rr(self):
         self.common_method(NtfRr)
+        self.save_color_map(ColorMapNtfRr, ntf_colourmap, ntf_str='ntf')
 
     def save_spindle_ntf_dr(self):
         self.common_method(SpindleNtfDr)
+        self.save_color_map(ColorMapSpindleNtfDr, ntf_colourmap, ntf_str='spindle_ntf')
 
     def save_spindle_ntf_rr(self):
         self.common_method(SpindleNtfRr)
+        self.save_color_map(ColorMapSpindleNtfRr, ntf_colourmap, ntf_str='spindle_ntf')
 
     def save_actual_test_data(self):
         self.common_method(ActualTestData)
