@@ -172,3 +172,8 @@ class SaveDesignLibrary(BaseModel):
     col: str
     images: List[ImageInfo] = Field(default=[])
 
+
+class AnalysisDesignLibraryZip(BaseModel):
+    name: str
+    url: str
+

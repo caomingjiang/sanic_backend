@@ -3,6 +3,7 @@ from common.common import JsonResponse, login_required, view_exception
 from db import CarInfo, DesignLibrary
 from common import data_validate
 from datetime import datetime
+from apps.design_library.control import AnalysisDesignLibraryZip
 import json
 
 bp = Blueprint('design_library', __name__, url_prefix='/api/v1/design_library/')
@@ -77,4 +78,18 @@ def get_design_library_data(se):
                 }
             }
     return JsonResponse.success(ret_data)
+
+
+@bp.route('analysis_zip', methods=['POST'])
+@login_required
+@view_exception(fail_msg='analysis_design_library_zip failed', db_session=True)
+def analysis_design_library_zip(se):
+    req_data = data_validate.AnalysisDesignLibraryZip(**request.json)
+    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
+    if not car_info:
+        return JsonResponse.fail('请先设置当前车型')
+
+    adlz_obj = AnalysisDesignLibraryZip(se, car_info, req_data.url)
+    adlz_obj.save_zip()
+    return JsonResponse.success()
 

@@ -9,6 +9,7 @@ from common.loggers import code_log
 from pydantic import ValidationError
 import json
 from db import Session
+from datetime import datetime
 
 
 class JsonResponse:
@@ -64,12 +65,13 @@ def login_required(view_func):
 
 
 def get_new_file_name(old_file_name):
+    now_str = datetime.now().strftime('%Y%m%d%H%M%S')
     randstr = ''.join(random.sample(string.ascii_letters + string.digits, 7))
     split_fs = old_file_name.rsplit('.', maxsplit=1)
     if len(split_fs) == 2:
-        new_file_name = '{0}_{1}.{2}'.format(split_fs[0], randstr, split_fs[1])
+        new_file_name = f'{split_fs[0]}_{now_str}_{randstr}.{split_fs[1]}'
     else:
-        new_file_name = '{0}_{1}'.format(old_file_name, randstr)
+        new_file_name = f'{old_file_name}_{now_str}_{randstr}'
     return new_file_name
 
 
