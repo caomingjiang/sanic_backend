@@ -161,3 +161,14 @@ class CalculateCarBodyScore(BaseModel):
     cal_type: str
     value: str
 
+
+class ImageInfo(BaseModel):
+    name: str
+    url: str
+
+
+class SaveDesignLibrary(BaseModel):
+    data_type: str
+    col: str
+    images: List[ImageInfo] = Field(default=[])
+

@@ -775,6 +775,37 @@ class CarBody(Base):
     )
 
 
+class DesignLibrary(Base):
+    __tablename__ = 'design_library'
+    DATA_TYPE_CHOICES = (
+        ('cring_vc', 'C ring'),
+        ('no1_beam_vc', '一号梁'),
+        ('fawsp_vc', '地板无支撑板面积'),
+        ('dorpfswc_vc', '备胎舱加强板设计'),
+        ('ceiling_st_vc', '顶棚结构'),
+        ('rsarp_vc', '后减震器加强板'),
+        ('dotsotwt_vc', '落水槽支架设计'),
+        ('front_subframe', '前副车架'),
+        ('backend_subframe', '后副车架'),
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    poor_design_1 = Column(String(250), comment='较差设计1')
+    poor_design_2 = Column(String(250), comment='较差设计2')
+    low_cost_scheme = Column(String(250), comment='低成本优化方案')
+    optimal_scheme_1 = Column(String(250), comment='最优方案1')
+    optimal_scheme_2 = Column(String(250), comment='最优方案2')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        {'comment': '专家设定-设计参照库'}
+    )
+
+
 try:
     Base.metadata.create_all(engine)
 except Exception as e:
