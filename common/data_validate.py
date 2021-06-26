@@ -177,3 +177,8 @@ class AnalysisDesignLibraryZip(BaseModel):
     name: str
     url: str
 
+
+class SaveWeightSettingsData(BaseModel):
+    save_type: str
+    excel_info: List[ExcelInfo]
+
