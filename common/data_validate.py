@@ -182,3 +182,8 @@ class SaveWeightSettingsData(BaseModel):
     save_type: str
     excel_info: List[ExcelInfo]
 
+
+class SaveAticPkgConfsData(BaseModel):
+    name: str
+    url: str
+
