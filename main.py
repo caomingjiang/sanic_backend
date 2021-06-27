@@ -11,6 +11,7 @@ from apps.color_map.view import bp as color_map_bp
 from apps.design_library.view import bp as design_library_bp
 from apps.weight_settings.view import bp as weight_settings_bp
 from apps.atic_pkg_confs.view import bp as atic_pkg_confs_bp
+from apps.acoustic_package.view import bp as acoustic_package_bp
 from gevent import monkey
 monkey.patch_all()
 
@@ -26,6 +27,7 @@ flask_app.register_blueprint(color_map_bp)
 flask_app.register_blueprint(design_library_bp)
 flask_app.register_blueprint(weight_settings_bp)
 flask_app.register_blueprint(atic_pkg_confs_bp)
+flask_app.register_blueprint(acoustic_package_bp)
 
 init_main()
 

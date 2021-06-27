@@ -186,4 +186,36 @@ class SaveWeightSettingsData(BaseModel):
 class SaveAticPkgConfsData(BaseModel):
     name: str
     url: str
+    
+
+class SingleAticPkgData(BaseModel):
+    active_conf: str = Field(description="当前选中选项")
+    
+
+class SaveAcousticPackageData(BaseModel):
+    fwsa_aoc: SingleAticPkgData = Field(description="前围吸隔声_落水槽盖板空调新风口吸音棉Absorber on cowl")
+    fwsa_fa: SingleAticPkgData = Field(description="前围吸隔声_前翼子板吸音棉Fender absorber")
+    fwsa_gv: SingleAticPkgData = Field(description="前围吸隔声_前围内隔音垫(汽油机车型Gasoline Vehicle)")
+    fwsa_hev: SingleAticPkgData = Field(description="前围吸隔声_前围内隔音垫(混合动力车型HEV)")
+    fwsa_ev: SingleAticPkgData = Field(description="前围吸隔声_前围内隔音垫(纯电动车型EV)")
+    fsaai_fsmt: SingleAticPkgData = Field(description="地板吸隔声_地板钣金厚度")
+    fsaai_lbautf: SingleAticPkgData = Field(description="地板吸隔声_地板下大电池敷设面积")
+    fsaai_fc: SingleAticPkgData = Field(description="地板吸隔声_主地毯隔音垫Floor Carpet")
+    fsaai_mcip_fc: SingleAticPkgData = Field(description="地板吸隔声_主地毯隔音垫Floor Carpet(电池铺在地板下的车型)")
+    fsaai_tbtbp: SingleAticPkgData = Field(description="地板吸隔声_地板下电池包与地板间的密封(电池铺在地板下的车型)")
+    fsaai_rsls: SingleAticPkgData = Field(description="地板吸隔声_后座椅下部隔音垫")
+    fsaai_bdprp: SingleAticPkgData = Field(description="地板吸隔声_车身阻尼垫、加强垫（前围、地板、顶盖、侧围、行李厢）")
+    fsaai_ufpsac: SingleAticPkgData = Field(description="地板吸隔声_地板下护板（导流板）及吸音棉")
+    swcf_hsac: SingleAticPkgData = Field(description="备胎舱地板吸隔声_三厢车衣帽架吸音棉")
+    swcf_ttia: SingleAticPkgData = Field(description="备胎舱地板吸隔声_举升门内饰板吸音棉Tailgate trim inside absorber")
+    swcf_tc: SingleAticPkgData = Field(description="备胎舱地板吸隔声_行李箱地毯")
+    swcf_sipis: SingleAticPkgData = Field(description="备胎舱地板吸隔声_备胎舱内隔音垫")
+    saaiowh_isms: SingleAticPkgData = Field(description="轮罩吸隔声_后轮罩内钣金隔音垫")
+    saaiowh_wh: SingleAticPkgData = Field(description="轮罩吸隔声_轮罩")
+    saaiowh_bceb: SingleAticPkgData = Field(description="轮罩吸隔声_车身空腔膨胀块Baffle")
+    saaiorsw_saca: SingleAticPkgData = Field(description="后侧围吸隔声_后轮罩上方吸声棉(后侧围空腔隔音棉)")
+    saaiorsw_itpor: SingleAticPkgData = Field(description="后侧围吸隔声_后侧围内饰板及其吸音棉")
+    saaiosd_iposd: SingleAticPkgData = Field(description="侧门吸隔声_侧门内饰板及其吸音棉")
+    saaiosd_dpd: SingleAticPkgData = Field(description="侧门吸隔声_车门板阻尼")
+    saaiosd_dwm: SingleAticPkgData = Field(description="侧门吸隔声_车门防水膜")
 
