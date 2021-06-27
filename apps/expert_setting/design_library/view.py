@@ -3,7 +3,7 @@ from common.common import JsonResponse, login_required, view_exception
 from db import CarInfo, DesignLibrary
 from common import data_validate
 from datetime import datetime
-from apps.design_library.control import AnalysisDesignLibraryZip
+from apps.expert_setting.design_library.control import AnalysisDesignLibraryZip
 import json
 
 bp = Blueprint('design_library', __name__, url_prefix='/api/v1/design_library/')

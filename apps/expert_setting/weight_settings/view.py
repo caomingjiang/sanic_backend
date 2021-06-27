@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from apps.weight_settings.control import WSaveExcelData, get_current_car_excel_data, get_freq_data_car_selects
+from apps.expert_setting.weight_settings.control import WSaveExcelData, get_current_car_excel_data, get_freq_data_car_selects
 from common.common import JsonResponse, login_required, view_exception
 from db import CarInfo, WCarExcelData
 from common import data_validate

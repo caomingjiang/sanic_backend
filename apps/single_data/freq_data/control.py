@@ -112,7 +112,7 @@ def get_current_car_excel_data(se, car_info):
     car_excels_dic = {data.data_type: data for data in car_excels}
 
     ret_data = {}
-    for data_type, type_name in CarExcelData.DATA_TYPE_ITEMS:
+    for data_type, type_name in CarExcelData.DATA_TYPE_CHOICES:
         car_excel_data = car_excels_dic.get(data_type)
         excel_name, excel_path = None, None
         if car_excel_data:

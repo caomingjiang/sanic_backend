@@ -219,3 +219,12 @@ class SaveAcousticPackageData(BaseModel):
     saaiosd_dpd: SingleAticPkgData = Field(description="侧门吸隔声_车门板阻尼")
     saaiosd_dwm: SingleAticPkgData = Field(description="侧门吸隔声_车门防水膜")
 
+
+class SingleDataConfsFiles(BaseModel):
+    name: str
+    url: str
+
+
+class SaveSingleDataConfsData(BaseModel):
+    save_type: str
+    files: List[SingleDataConfsFiles] = Field(default=[])

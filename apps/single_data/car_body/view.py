@@ -1,6 +1,6 @@
 from flask import Blueprint, request, Response
 from common.common import JsonResponse, login_required, view_exception
-from apps.car_body.control import ExportCarBodyData
+from apps.single_data.car_body.control import ExportCarBodyData
 from db import CarInfo, CarBody
 from common import data_validate
 from datetime import datetime

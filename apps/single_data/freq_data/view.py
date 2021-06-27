@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from apps.freq_data.control import SaveExcelData, get_current_car_excel_data, get_freq_data_car_selects
+from apps.single_data.freq_data.control import SaveExcelData, get_current_car_excel_data, get_freq_data_car_selects
 from common.common import JsonResponse, login_required, view_exception
 from db import CarInfo, CarExcelData
 from common import data_validate

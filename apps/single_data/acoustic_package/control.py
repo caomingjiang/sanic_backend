@@ -15,7 +15,7 @@ class ExportAcousticPackage(object):
             AticPkgConfs.car_info == self.car_info, AticPkgConfs.is_active == 1
         )
         apc_dic = defaultdict(dict)
-        data_type_dic = dict(AticPkgConfs.DATA_TYPE_ITEMS)
+        data_type_dic = dict(AticPkgConfs.DATA_TYPE_CHOICES)
         for apc_obj in apc_objs:
             data_type = apc_obj.data_type
             col1_col2 = data_type_dic.get(data_type)

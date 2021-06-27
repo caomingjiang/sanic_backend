@@ -10,7 +10,7 @@ class ColorMapData(object):
     def search_data(self, table_model):
         all_data = self.se.query(table_model).filter(table_model.car_info == self.car_info)
         map_data = defaultdict(dict)
-        y_axis_dic = dict(table_model.DATA_TYPE_ITEMS)
+        y_axis_dic = dict(table_model.DATA_TYPE_CHOICES)
         x_axis = set()
         for single_data in all_data:
             x_axis.add(single_data.frequency_range)

@@ -289,7 +289,7 @@ class Dstiff(Base):
 class ColorMapDstiff(Base):
     __tablename__ = 'c_color_map_dstiff'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('fsb_ap_x', '前悬左塔座接附点X'),
         ('fsb_ap_y', '前悬左塔座接附点Y'),
@@ -325,7 +325,7 @@ class ColorMapDstiff(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -338,7 +338,7 @@ class ColorMapDstiff(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -390,7 +390,7 @@ class NtfDr(Base):
 class ColorMapNtfDr(Base):
     __tablename__ = 'c_color_map_ntf_dr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('fslftt_driver_x', '前悬左前塔座到DriverX'),
         ('fslftt_driver_y', '前悬左前塔座到DriverY'),
@@ -426,7 +426,7 @@ class ColorMapNtfDr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -439,7 +439,7 @@ class ColorMapNtfDr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -492,7 +492,7 @@ class NtfRr(Base):
 class ColorMapNtfRr(Base):
     __tablename__ = 'c_color_map_ntf_rr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('fslft_passenger_x', '前悬左前塔座到PassengerX'),
         ('fslft_passenger_y', '前悬左前塔座到PassengerY'),
@@ -528,7 +528,7 @@ class ColorMapNtfRr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -541,7 +541,7 @@ class ColorMapNtfRr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -579,7 +579,7 @@ class SpindleNtfDr(Base):
 class ColorMapSpindleNtfDr(Base):
     __tablename__ = 'c_color_map_spindle_ntf_dr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('lfwc_driver_x', '左前轮心_DriverX'),
         ('lfwc_driver_y', '左前轮心_DriverY'),
@@ -600,7 +600,7 @@ class ColorMapSpindleNtfDr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -613,7 +613,7 @@ class ColorMapSpindleNtfDr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -651,7 +651,7 @@ class SpindleNtfRr(Base):
 class ColorMapSpindleNtfRr(Base):
     __tablename__ = 'c_color_map_spindle_ntf_rr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('lfwc_rrx', '左前轮心_RRX'),
         ('lfwc_rry', '左前轮心_RRY'),
@@ -672,7 +672,7 @@ class ColorMapSpindleNtfRr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -685,7 +685,7 @@ class ColorMapSpindleNtfRr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -712,7 +712,7 @@ class ActualTestData(Base):
 
 class CarExcelData(Base):
     __tablename__ = 'car_excel_data'
-    DATA_TYPE_ITEMS = (
+    DATA_TYPE_CHOICES = (
         ('modal_map', "ModalMap表"),
         ('dstiff', "Dstiff表"),
         ('ntf_dr', "NtfDr表"),
@@ -725,7 +725,7 @@ class CarExcelData(Base):
     id = Column(INTEGER(11), primary_key=True)
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     excel_name = Column(String(128), comment='excel文件名称')
     excel_path = Column(String(250), comment='excel文件路径')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
@@ -808,7 +808,7 @@ class DesignLibrary(Base):
 
 class WCarExcelData(Base):
     __tablename__ = 'w_car_excel_data'
-    DATA_TYPE_ITEMS = (
+    DATA_TYPE_CHOICES = (
         ('dstiff', "Dstiff表"),
         ('ntf_dr', "NtfDr表"),
         ('ntf_rr', "NtfRr表"),
@@ -819,7 +819,7 @@ class WCarExcelData(Base):
     id = Column(INTEGER(11), primary_key=True)
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     excel_name = Column(String(128), comment='excel文件名称')
     excel_path = Column(String(250), comment='excel文件路径')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
@@ -834,7 +834,7 @@ class WCarExcelData(Base):
 class WDstiff(Base):
     __tablename__ = 'w_dstiff'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('fsb_ap_x', '前悬左塔座接附点X'),
         ('fsb_ap_y', '前悬左塔座接附点Y'),
@@ -870,7 +870,7 @@ class WDstiff(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -883,7 +883,7 @@ class WDstiff(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -891,7 +891,7 @@ class WDstiff(Base):
 class WNtfDr(Base):
     __tablename__ = 'w_ntf_dr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('fslftt_driver_x', '前悬左前塔座到DriverX'),
         ('fslftt_driver_y', '前悬左前塔座到DriverY'),
@@ -927,7 +927,7 @@ class WNtfDr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -940,7 +940,7 @@ class WNtfDr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -948,7 +948,7 @@ class WNtfDr(Base):
 class WNtfRr(Base):
     __tablename__ = 'w_ntf_rr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('fslft_passenger_x', '前悬左前塔座到PassengerX'),
         ('fslft_passenger_y', '前悬左前塔座到PassengerY'),
@@ -984,7 +984,7 @@ class WNtfRr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -997,7 +997,7 @@ class WNtfRr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -1005,7 +1005,7 @@ class WNtfRr(Base):
 class WSpindleNtfDr(Base):
     __tablename__ = 'w_spindle_ntf_dr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('lfwc_driver_x', '左前轮心_DriverX'),
         ('lfwc_driver_y', '左前轮心_DriverY'),
@@ -1026,7 +1026,7 @@ class WSpindleNtfDr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -1039,7 +1039,7 @@ class WSpindleNtfDr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -1047,7 +1047,7 @@ class WSpindleNtfDr(Base):
 class WSpindleNtfRr(Base):
     __tablename__ = 'w_spindle_ntf_rr'
 
-    DATA_TYPE_ITEMS = [
+    DATA_TYPE_CHOICES = [
         ('frequency_range', '频率范围'),
         ('lfwc_rrx', '左前轮心_RRX'),
         ('lfwc_rry', '左前轮心_RRY'),
@@ -1068,7 +1068,7 @@ class WSpindleNtfRr(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
@@ -1081,7 +1081,7 @@ class WSpindleNtfRr(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 
@@ -1104,7 +1104,7 @@ class SCarFileData(Base):
 
 class AticPkgConfs(Base):
     __tablename__ = 'atic_pkg_confs'
-    DATA_TYPE_ITEMS = (
+    DATA_TYPE_CHOICES = (
         ("fwsa_aoc", "前围吸隔声_落水槽盖板空调新风口吸音棉Absorber on cowl"),
         ("fwsa_fa", "前围吸隔声_前翼子板吸音棉Fender absorber"),
         ("fwsa_gv", "前围吸隔声_前围内隔音垫(汽油机车型Gasoline Vehicle)"),
@@ -1135,7 +1135,7 @@ class AticPkgConfs(Base):
     id = Column(INTEGER(11), primary_key=True)
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
-    data_type = Column(ChoiceType(DATA_TYPE_ITEMS, String(50)), nullable=False, comment='数据类型')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     conf_item = Column(String(128), nullable=False, comment='策略选型')
     weight = Column(Float(precision='10,2'), nullable=False, comment='重量')
     score = Column(Float(precision='10,2'), nullable=False, comment='分值')
@@ -1152,7 +1152,166 @@ class AticPkgConfs(Base):
     @classmethod
     def comment_dic(cls):
         ret_data = {}
-        for data_type, type_name in cls.DATA_TYPE_ITEMS:
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
+            ret_data[type_name] = data_type
+        return ret_data
+
+
+class WCarFileData(Base):
+    __tablename__ = 'w_car_file_data'
+    DATA_TYPE_CHOICES = [
+        ('subframe', '副车架'),
+        ('lower_arm', '下摆臂'),
+        ('car_body', '车身'),
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
+    file_name = Column(String(128), comment='json文件名称')
+    file_path = Column(String(250), comment='json文件路径')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        {'comment': '专家设定-单值输入配置文件表'}
+    )
+
+
+class WChassisBase(Base):
+    __tablename__ = 'w_chassis_base'
+    DATA_TYPE_CHOICES = (
+        ('radiation_sound', '轮胎 -- 胎面辐射声（轮胎选型）'),
+        ('peak_frequency', '轮胎 -- 力传递峰值频率'),
+        ('force_transfer', '轮胎 -- 力传递峰值'),
+        ('stability_performance', '轮胎 -- 操稳性能'),
+        ('durability', '轮胎 -- 耐久性能'),
+        ('rim_stiffness_a', '轮辋刚度 -- 16-17’'),
+        ('rim_stiffness_b', '轮辋刚度 -- 18-19’'),
+        ('full_bend_mode', '前副车架（自由-自由） -- 全副车架(bend)模态'),
+        ('half_bend_mode', '前副车架（自由-自由） -- 半副车架(bend)模态'),
+        ('torsion_beam', '后副车架（自由-自由） -- 类型一：扭转梁(bend)模态'),
+        ('multi_link', '后副车架（自由-自由） -- 类型二：多连杆(横梁弯曲)模态'),
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    value = Column(Float(precision='10,2'), comment="值")
+    score = Column(Float(precision='10,2'), comment="分值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        {'comment': '专家设定-底盘-基本信息'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
+            ret_data[type_name] = data_type
+        return ret_data
+
+
+class WChassisDetail(Base):
+    __tablename__ = 'w_chassis_detail'
+    DATA_TYPE_CHOICES = (
+        ('handling_x', '前下摆臂handling衬套 -- X向静刚度'),
+        ('handling_y', '前下摆臂handling衬套 -- Y向静刚度'),
+        ('handling_z', '前下摆臂handling衬套 -- Z向静刚度'),
+        ('handling_stability', '前下摆臂handling衬套 -- 操稳性能'),
+        ('handling_durability', '前下摆臂handling衬套 -- 耐久性能'),
+        ('ride_x', '前下摆臂ride衬套 -- X向静刚度'),
+        ('ride_y', '前下摆臂ride衬套 -- Y向静刚度'),
+        ('ride_z', '前下摆臂ride衬套 -- Z向静刚度'),
+        ('ride_stability', '前下摆臂ride衬套 -- 操稳性能'),
+        ('ride_durability', '前下摆臂ride衬套 -- 耐久性能'),
+        ('front_subframe_x', '后副车架前衬套 -- X向静刚度'),
+        ('front_subframe_y', '后副车架前衬套 -- Y向静刚度'),
+        ('front_subframe_z', '后副车架前衬套 -- Z向静刚度'),
+        ('front_subframe_stability', '后副车架前衬套 -- 操稳性能'),
+        ('front_subframe_durability', '后副车架前衬套 -- 耐久性能'),
+        ('backend_subframe_x', '后副车架后衬套 -- X向静刚度'),
+        ('backend_subframe_y', '后副车架后衬套 -- Y向静刚度'),
+        ('backend_subframe_z', '后副车架后衬套 -- Z向静刚度'),
+        ('backend_subframe_stability', '后副车架后衬套 -- 操稳性能'),
+        ('backend_subframe_durability', '后副车架后衬套 -- 耐久性能'),
+        ('blade_arm_x', '刀锋臂衬套 -- X向静刚度'),
+        ('blade_arm_y', '刀锋臂衬套 -- Y向静刚度'),
+        ('blade_arm_z', '刀锋臂衬套 -- Z向静刚度'),
+        ('blade_arm_stability', '刀锋臂衬套 -- 操稳性能'),
+        ('blade_arm_durability', '刀锋臂衬套 -- 耐久性能')
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    stiffness_ratio = Column(Float(precision='10,2'), comment="刚度比")
+    score = Column(Float(precision='10,2'), comment="分值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        {'comment': '专家设定-底盘-详细信息'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
+            ret_data[type_name] = data_type
+        return ret_data
+
+
+class WCarBody(Base):
+    __tablename__ = 'w_car_body'
+    DATA_TYPE_CHOICES = (
+        ('biw_gtmf', '白车身 -- 全局扭转模态频率'),
+        ('biw_gbmf', '白车身 -- 全局弯曲模态频率'),
+        ('cring_vc', 'C ring -- Visual Check'),
+        ('fwall_lps', '前围 -- 大板刚度'),
+        ('no1_beam_vc', '一号梁 -- Visual Check'),
+        ('floor_lps', '地板 -- 大板刚度'),
+        ('fawsp_vc', '地板无支撑板面积 -- Visual Check'),
+        ('swcf_lps', '备胎舱地板 -- 大板刚度'),
+        ('dorpfswc_vc', '备胎舱加强板设计 -- Visual Check'),
+        ('ceiling_lps', '顶棚 -- 大板刚度'),
+        ('ceiling_st_vc', '顶棚结构 -- Visual Check'),
+        ('lwhip_lps', '左轮罩内板 -- 大板刚度'),
+        ('rsarp_vc', '后减震器加强板 -- Visual Check'),
+        ('rwhip_lps', '右轮罩内板 -- 大板刚度'),
+        ('rsop_lps', '后侧围外板 -- 大板刚度'),
+        ('coat_rack_lps', '衣帽架 -- 大板刚度'),
+        ('flume_lps', '落水槽 -- 大板刚度'),
+        ('dotsotwt_vc', '落水槽支架设计 -- Visual Check'),
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    value = Column(String(128), comment="值")
+    score = Column(Float(precision='10,2'), comment="分值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_data_type_value', 'car_info_id', 'data_type', 'value', unique=True),
+        {'comment': '专家设定-车身'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
             ret_data[type_name] = data_type
         return ret_data
 

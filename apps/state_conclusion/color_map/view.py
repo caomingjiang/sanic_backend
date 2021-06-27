@@ -1,9 +1,7 @@
-from flask import Blueprint, request, Response
+from flask import Blueprint
 from common.common import JsonResponse, login_required, view_exception
-from apps.color_map.control import ColorMapData
+from apps.state_conclusion.color_map.control import ColorMapData
 from db import CarInfo
-from common import data_validate
-from datetime import datetime
 
 bp = Blueprint('color_map', __name__, url_prefix='/api/v1/color_map/')
 

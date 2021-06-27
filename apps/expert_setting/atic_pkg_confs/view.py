@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from apps.atic_pkg_confs.control import AticPkgConfsData, get_current_car_file_data
+from apps.expert_setting.atic_pkg_confs.control import AticPkgConfsData, get_current_car_file_data
 from common.common import JsonResponse, login_required, view_exception
 from db import CarInfo, SCarFileData
 from common import data_validate

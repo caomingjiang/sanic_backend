@@ -1,6 +1,6 @@
 from flask import Blueprint, request, Response
 from common.common import JsonResponse, login_required, view_exception
-from apps.acoustic_package.control import ExportAcousticPackage
+from apps.single_data.acoustic_package.control import ExportAcousticPackage
 from db import CarInfo, AticPkgConfs
 from common import data_validate
 from collections import defaultdict
@@ -25,7 +25,7 @@ def get_acoustic_package_data(se):
             'is_active': apc_obj.is_active
         }
     ret_data = {}
-    for data_type, type_name in AticPkgConfs.DATA_TYPE_ITEMS:
+    for data_type, type_name in AticPkgConfs.DATA_TYPE_CHOICES:
         single_data_dic = apc_obj_dic.get(data_type)
         conf_items = {}
         active_conf = ''
