@@ -5,6 +5,7 @@ from common.common import JsonResponse, login_required, view_exception
 from common.common import get_new_file_name
 from datetime import datetime
 from common import data_validate
+from db import CarInfo, CarTestInfo
 
 
 bp = Blueprint('common', __name__, url_prefix='/api/v1/common/')
@@ -52,3 +53,30 @@ def download_file():
     if not os.path.exists(full_path):
         return JsonResponse.fail('文件不存在')
     return send_file(full_path)
+
+
+@bp.route('car_info', methods=['GET'])
+@login_required
+@view_exception(fail_msg="common get_car_info failed", db_session=True)
+def common_get_car_info(se):
+    req_data = data_validate.CommonGetCarInfo(**request.args.to_dict())
+    if req_data.car_id:
+        car_obj = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
+    else:
+        car_obj = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
+        if not car_obj:
+            car_obj = se.query(CarInfo).all().first()
+    if not car_obj:
+        return JsonResponse.fail('请增加车型')
+    car_test_obj = se.query(CarTestInfo).filter(
+        CarTestInfo.car_info == car_obj, CarTestInfo.dev_stage == car_obj.dev_stage
+    ).first()
+    test_time = car_test_obj.test_time if car_test_obj else None
+    ret_data = {
+        'id': car_obj.id,
+        'car_name': car_obj.car_name,
+        'test_time': test_time.strftime('%Y-%m-%d %H:%M:%S') if test_time else '',
+        'dev_stage': car_obj.dev_stage.name,
+        'test_user': car_test_obj.test_user or ''
+    }
+    return JsonResponse.success(ret_data)

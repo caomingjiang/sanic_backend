@@ -12,9 +12,8 @@ bp = Blueprint('atic_pkg_confs', __name__, url_prefix='/api/v1/atic_pkg_confs/')
 @login_required
 @view_exception(fail_msg='get_atic_pkg_confs_data failed', db_session=True)
 def get_atic_pkg_confs_data(se):
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    req_data = data_validate.GetAticPkgConfsData(**request.args.to_dict())
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
     ret_data = get_current_car_file_data(se, car_info)
     return JsonResponse.success(ret_data)
 
@@ -24,9 +23,7 @@ def get_atic_pkg_confs_data(se):
 @view_exception(fail_msg='save_atic_pkg_confs_data failed', db_session=True)
 def save_atic_pkg_confs_data(se):
     req_data = data_validate.SaveAticPkgConfsData(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
     file_name = req_data.name
     file_path = req_data.url

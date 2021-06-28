@@ -14,9 +14,7 @@ bp = Blueprint('single_data_confs', __name__, url_prefix='/api/v1/single_data_co
 @view_exception(fail_msg='save_single_data_confs_data failed', db_session=True)
 def save_single_data_confs_data(se):
     req_data = data_validate.SaveSingleDataConfsData(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
     now = datetime.now()
     file_name, file_path = None, None
@@ -47,9 +45,8 @@ def save_single_data_confs_data(se):
 @login_required
 @view_exception(fail_msg='get_single_data_confs_data failed', db_session=True)
 def get_single_data_confs_data(se):
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    req_data = data_validate.GetSingleDataConfsData(**request.args.to_dict())
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
     ret_data = get_current_car_file_data(se, car_info)
     return JsonResponse.success(ret_data)
 

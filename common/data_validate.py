@@ -168,22 +168,42 @@ class ImageInfo(BaseModel):
 
 
 class SaveDesignLibrary(BaseModel):
+    car_id: int
     data_type: str
     col: str
     images: List[ImageInfo] = Field(default=[])
 
 
+class GetDesignLibrary(BaseModel):
+    car_id: int
+
+
+class GetWeightSettingsData(BaseModel):
+    car_id: int
+
+
+class GetAticPkgConfsData(BaseModel):
+    car_id: int
+
+
+class GetSingleDataConfsData(BaseModel):
+    car_id: int
+
+
 class AnalysisDesignLibraryZip(BaseModel):
+    car_id: int
     name: str
     url: str
 
 
 class SaveWeightSettingsData(BaseModel):
+    car_id: int
     save_type: str
     excel_info: List[ExcelInfo]
 
 
 class SaveAticPkgConfsData(BaseModel):
+    car_id: int
     name: str
     url: str
     
@@ -226,5 +246,10 @@ class SingleDataConfsFiles(BaseModel):
 
 
 class SaveSingleDataConfsData(BaseModel):
+    car_id: int
     save_type: str
     files: List[SingleDataConfsFiles] = Field(default=[])
+
+
+class CommonGetCarInfo(BaseModel):
+    car_id: Optional[int]

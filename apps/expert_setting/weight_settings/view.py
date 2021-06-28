@@ -12,9 +12,8 @@ bp = Blueprint('weight_settings', __name__, url_prefix='/api/v1/weight_settings/
 @login_required
 @view_exception(fail_msg='get_weight_settings_data failed', db_session=True)
 def get_weight_settings_data(se):
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    req_data = data_validate.GetWeightSettingsData(**request.args.to_dict())
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
     car_excels = get_current_car_excel_data(se, car_info)
     car_selects = get_freq_data_car_selects(se)
     ret_data = {
@@ -29,9 +28,7 @@ def get_weight_settings_data(se):
 @view_exception(fail_msg='save_weight_settings_data failed', db_session=True)
 def save_weight_settings_data(se):
     req_data = data_validate.SaveWeightSettingsData(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
     now = datetime.now()
     excel_name, excel_path = None, None

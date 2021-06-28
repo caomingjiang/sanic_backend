@@ -14,9 +14,7 @@ bp = Blueprint('design_library', __name__, url_prefix='/api/v1/design_library/')
 @view_exception(fail_msg='save_design_library_data failed', db_session=True)
 def save_design_library_data(se):
     req_data = data_validate.SaveDesignLibrary(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
     dl_obj = se.query(DesignLibrary).filter(
         DesignLibrary.car_info == car_info, DesignLibrary.data_type == req_data.data_type
@@ -40,9 +38,8 @@ def save_design_library_data(se):
 @login_required
 @view_exception(fail_msg='get_design_library_data failed', db_session=True)
 def get_design_library_data(se):
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    req_data = data_validate.GetDesignLibrary(**request.args.to_dict())
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
     dls = se.query(DesignLibrary).filter(DesignLibrary.car_info == car_info)
     dl_dic = {
         dl.data_type.code: dl for dl in dls
@@ -85,9 +82,7 @@ def get_design_library_data(se):
 @view_exception(fail_msg='analysis_design_library_zip failed', db_session=True)
 def analysis_design_library_zip(se):
     req_data = data_validate.AnalysisDesignLibraryZip(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
+    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
     adlz_obj = AnalysisDesignLibraryZip(se, car_info, req_data.url)
     adlz_obj.save_zip()
