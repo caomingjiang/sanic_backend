@@ -1201,12 +1201,12 @@ class WChassisBase(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
-    value = Column(Float(precision='10,2'), comment="值")
-    score = Column(Float(precision='10,2'), comment="分值")
+    value = Column(String(1000), comment="值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
+        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
         {'comment': '专家设定-底盘-基本信息'}
     )
 
@@ -1253,12 +1253,12 @@ class WChassisDetail(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
-    stiffness_ratio = Column(Float(precision='10,2'), comment="刚度比")
-    score = Column(Float(precision='10,2'), comment="分值")
+    value = Column(String(1000), comment="刚度比")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
+        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
         {'comment': '专家设定-底盘-详细信息'}
     )
 
@@ -1298,13 +1298,12 @@ class WCarBody(Base):
     car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
     car_info = relationship('CarInfo')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
-    value = Column(String(128), comment="值")
-    score = Column(Float(precision='10,2'), comment="分值")
+    value = Column(String(1000), comment="值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type_value', 'car_info_id', 'data_type', 'value', unique=True),
+        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
         {'comment': '专家设定-车身'}
     )
 

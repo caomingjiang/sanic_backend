@@ -3,7 +3,6 @@ from confs.config import UPLOAD_DIR
 from datetime import datetime
 from db import WChassisBase, WChassisDetail, WCarBody, WCarFileData
 import json
-import copy
 
 
 class SingleDataConfsMethods(object):
@@ -12,67 +11,32 @@ class SingleDataConfsMethods(object):
         self.car_id = car_id
         self.se = se
 
-    def save_subframe(self):
+    def common_save(self, table_model):
         now = datetime.now()
         with open(self.full_file_path, 'rb+') as f:
             data = json.loads(f.read())
-        comment_dic = WChassisBase.comment_dic()
-        insert_list = []
-        for type_name, value_list in data.items():
-            data_type = comment_dic[type_name.replace('_', ' -- ')]
-            save_dic = {
-                'car_info_id': self.car_id, 'data_type': data_type, 'value': value_list[0][0],
-                'score': value_list[1][0], 'update_time': now, 'create_time': now
-            }
-            insert_list.append(WChassisBase(**save_dic))
-        self.se.query(WChassisBase).filter(WChassisBase.car_info_id == self.car_id).delete()
-        self.se.add_all(insert_list)
-        self.se.commit()
-
-    def save_lower_arm(self):
-        now = datetime.now()
-        with open(self.full_file_path, 'rb+') as f:
-            data = json.loads(f.read())
-        comment_dic = WChassisDetail.comment_dic()
-        insert_list = []
-        for type_name, value_list in data.items():
-            data_type = comment_dic[type_name.replace('_', ' -- ')]
-            save_dic = {
-                'car_info_id': self.car_id, 'data_type': data_type, 'stiffness_ratio': value_list[0][0],
-                'score': value_list[1][0], 'update_time': now, 'create_time': now
-            }
-            insert_list.append(WChassisDetail(**save_dic))
-        self.se.query(WChassisDetail).filter(WChassisDetail.car_info_id == self.car_id).delete()
-        self.se.add_all(insert_list)
-        self.se.commit()
-
-    def save_car_body(self):
-        now = datetime.now()
-        with open(self.full_file_path, 'rb+') as f:
-            data = json.loads(f.read())
-        comment_dic = WCarBody.comment_dic()
+        comment_dic = table_model.comment_dic()
         insert_list = []
         for type_name, value_list in data.items():
             data_type = comment_dic[type_name.replace('_', ' -- ')]
             save_dic = {
                 'car_info_id': self.car_id, 'data_type': data_type,
+                'value': json.dumps(value_list, ensure_ascii=False),
                 'update_time': now, 'create_time': now
             }
-            if isinstance(value_list, list):
-                save_dic.update({
-                    'value': value_list[0][0], 'score': value_list[1][0],
-                })
-                insert_list.append(WCarBody(**save_dic))
-            elif isinstance(value_list, dict):
-                for value, score in value_list.items():
-                    tmp_save_dic = copy.deepcopy(save_dic)
-                    tmp_save_dic.update({
-                        'value': value, 'score': score,
-                    })
-                    insert_list.append(WCarBody(**tmp_save_dic))
-        self.se.query(WCarBody).filter(WCarBody.car_info_id == self.car_id).delete()
+            insert_list.append(table_model(**save_dic))
+        self.se.query(table_model).filter(table_model.car_info_id == self.car_id).delete()
         self.se.add_all(insert_list)
         self.se.commit()
+
+    def save_subframe(self):
+        self.common_save(WChassisBase)
+
+    def save_lower_arm(self):
+        self.common_save(WChassisDetail)
+
+    def save_car_body(self):
+        self.common_save(WCarBody)
 
 
 def get_current_car_file_data(se, car_info):
