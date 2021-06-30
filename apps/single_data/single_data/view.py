@@ -1,10 +1,14 @@
+import os
+import json
 from flask import Blueprint, request, Response
 from common.common import JsonResponse, login_required, view_exception
+from common.loggers import code_log
 from apps.single_data.single_data.control import ExportSingleData
-from db import CarInfo, ChassisBase, ChassisDetail
+from db import CarInfo, ChassisBase, ChassisDetail, WCarFileData
 from common import data_validate
 from datetime import datetime
-from ai.noise_algo_func import single_fuchejia_all_func
+from confs.config import UPLOAD_DIR
+from ai.noise_algo_func import single_fuchejia_all_func, single_fuchejia_func, single_xiabaibi_func
 
 bp = Blueprint('single_data', __name__, url_prefix='/api/v1/single_data/')
 
@@ -102,24 +106,70 @@ def calculate_tire_score():
 
 @bp.route('cal_base_score', methods=['POST'])
 @login_required
-@view_exception(fail_msg='cal_base_score failed')
-def cal_base_score():
+@view_exception(fail_msg='cal_base_score failed', db_session=True)
+def cal_base_score(se):
     req_data = data_validate.CalculateBaseScore(**request.json)
-    return JsonResponse.success(req_data.num)
+    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
+    if not car_info:
+        return JsonResponse.fail('请先设置当前车型')
+    w_car_file = se.query(WCarFileData).filter(
+        WCarFileData.car_info == car_info, WCarFileData.data_type == 'subframe'
+    ).first()
+    if not w_car_file:
+        return JsonResponse.fail("缺少专家设定数据")
+    car_file_url = w_car_file.file_path or ''
+    car_file_path = os.path.join(UPLOAD_DIR, car_file_url)
+    if not os.path.exists(car_file_path):
+        return JsonResponse.fail("缺少专家设定数据")
+    with open(car_file_path, 'rb+') as f:
+        fuchejia = json.loads(f.read())
+    comment_dic = dict(ChassisBase.DATA_TYPE_CHOICES)
+    type_name = comment_dic[req_data.cal_type].replace(' -- ', '_')
+    score = single_fuchejia_func(type_name, req_data.num, fuchejia)
+    if score == 'error':
+        code_log.error(f'分值算法出错，single_fuchejia_func("{type_name}", {req_data.num}, '
+                       f'{json.dumps(fuchejia, ensure_ascii=False)})')
+        return JsonResponse.fail('分值算法出错，请联系管理员')
+    return JsonResponse.success(score)
 
 
 @bp.route('cal_detail_score', methods=['POST'])
 @login_required
-@view_exception(fail_msg='cal_detail_score failed')
-def cal_detail_score():
+@view_exception(fail_msg='cal_detail_score failed', db_session=True)
+def cal_detail_score(se):
     req_data = data_validate.CalculateDetailScore(**request.json)
+
+    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
+    if not car_info:
+        return JsonResponse.fail('请先设置当前车型')
+    w_car_file = se.query(WCarFileData).filter(
+        WCarFileData.car_info == car_info, WCarFileData.data_type == 'lower_arm'
+    ).first()
+    if not w_car_file:
+        return JsonResponse.fail("缺少专家设定数据")
+
     if req_data.denominator == 0:
         stiffness_ratio = 0
     else:
         stiffness_ratio = round(req_data.molecule / req_data.denominator, 2)
+
+    car_file_url = w_car_file.file_path or ''
+    car_file_path = os.path.join(UPLOAD_DIR, car_file_url)
+    if not os.path.exists(car_file_path):
+        return JsonResponse.fail("缺少专家设定数据")
+    with open(car_file_path, 'rb+') as f:
+        xiabaibi = json.loads(f.read())
+    comment_dic = dict(ChassisDetail.DATA_TYPE_CHOICES)
+    type_name = comment_dic[req_data.cal_type].replace(' -- ', '_')
+    score = single_xiabaibi_func(type_name, stiffness_ratio, xiabaibi)
+    if score == 'error':
+        code_log.error(f'分值算法出错，single_xiabaibi_func("{type_name}", {stiffness_ratio}, '
+                       f'{json.dumps(xiabaibi, ensure_ascii=False)})')
+        return JsonResponse.fail('分值算法出错，请联系管理员')
+
     ret_data = {
         'stiffness_ratio': stiffness_ratio,
-        'score': stiffness_ratio
+        'score': score
     }
     return JsonResponse.success(ret_data)
 
