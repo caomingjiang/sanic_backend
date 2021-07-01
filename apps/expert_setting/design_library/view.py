@@ -88,3 +88,37 @@ def analysis_design_library_zip(se):
     adlz_obj.save_zip()
     return JsonResponse.success()
 
+
+@bp.route('get_dev_lib', methods=['GET'])
+@login_required
+@view_exception(fail_msg='analysis_design_get_dev_lib failed', db_session=True)
+def analysis_design_get_dev_lib(se):
+    req_data = data_validate.GetDevLib(**request.args.to_dict())
+    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
+    if not car_info:
+        return JsonResponse.fail('请先设置当前车型')
+    design_lib = se.query(DesignLibrary).filter(
+        DesignLibrary.car_info == car_info, DesignLibrary.data_type == req_data.data_type
+    ).first()
+    ret_data = {
+        'poor_design_1': '',
+        'poor_design_2': '',
+        'low_cost_scheme': '',
+        'optimal_scheme_1': '',
+        'optimal_scheme_2': ''
+    }
+    if design_lib:
+        poor_design_1 = json.loads(design_lib.poor_design_1) if design_lib.poor_design_1 else []
+        poor_design_2 = json.loads(design_lib.poor_design_2) if design_lib.poor_design_2 else []
+        low_cost_scheme = json.loads(design_lib.low_cost_scheme) if design_lib.low_cost_scheme else []
+        optimal_scheme_1 = json.loads(design_lib.optimal_scheme_1) if design_lib.optimal_scheme_1 else []
+        optimal_scheme_2 = json.loads(design_lib.optimal_scheme_2) if design_lib.optimal_scheme_2 else []
+        ret_data = {
+            'poor_design_1': poor_design_1[0]['url'] if poor_design_1 else '',
+            'poor_design_2': poor_design_2[0]['url'] if poor_design_2 else '',
+            'low_cost_scheme': low_cost_scheme[0]['url'] if low_cost_scheme else '',
+            'optimal_scheme_1': optimal_scheme_1[0]['url'] if optimal_scheme_1 else '',
+            'optimal_scheme_2': optimal_scheme_2[0]['url'] if optimal_scheme_2 else '',
+        }
+    return JsonResponse.success(ret_data)
+

@@ -253,3 +253,7 @@ class SaveSingleDataConfsData(BaseModel):
 
 class CommonGetCarInfo(BaseModel):
     car_id: Optional[int]
+
+
+class GetDevLib(BaseModel):
+    data_type: str
