@@ -12,8 +12,12 @@ def get_sound_predict_data(se):
     car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
     if not car_info:
         return JsonResponse.fail('请先设置当前车型')
-    cma_datas = se.query(ColorMapActualTestData).filter(ColorMapActualTestData.car_info == car_info)
-    tcm_datas = se.query(TotalColorMapData).filter(TotalColorMapData.car_info == car_info)
+    cma_datas = se.query(ColorMapActualTestData).filter(
+        ColorMapActualTestData.car_info == car_info
+    ).order_by(ColorMapActualTestData.id.asc())
+    tcm_datas = se.query(TotalColorMapData).filter(
+        TotalColorMapData.car_info == car_info
+    ).order_by(TotalColorMapData.id.asc())
     xaxis_list = []
     cma_dr_list, cma_rr_list = [], []
     for cma_data in cma_datas:
