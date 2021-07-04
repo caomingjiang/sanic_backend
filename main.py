@@ -13,6 +13,8 @@ from apps.expert_setting.weight_settings.view import bp as weight_settings_bp
 from apps.expert_setting.atic_pkg_confs.view import bp as atic_pkg_confs_bp
 from apps.single_data.acoustic_package.view import bp as acoustic_package_bp
 from apps.expert_setting.single_data_confs.view import bp as single_data_confs_bp
+from apps.state_conclusion.sound_predict.view import bp as sound_predict_bp
+from apps.state_conclusion.risk_tik.view import bp as risk_tik_bp
 from gevent import monkey
 monkey.patch_all()
 
@@ -30,6 +32,8 @@ flask_app.register_blueprint(weight_settings_bp)
 flask_app.register_blueprint(atic_pkg_confs_bp)
 flask_app.register_blueprint(acoustic_package_bp)
 flask_app.register_blueprint(single_data_confs_bp)
+flask_app.register_blueprint(sound_predict_bp)
+flask_app.register_blueprint(risk_tik_bp)
 
 init_main()
 

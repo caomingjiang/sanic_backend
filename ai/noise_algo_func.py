@@ -164,26 +164,25 @@ def Multi_Score_Predict(colourmap_dict, weights_dict, adjust_value=115):
     colourmap_dict : dstff_df, ntf_df, spindle_ntf_df, 
     weights_map : weights_df
     '''
+    x = colourmap_dict['dstiff'].drop('频率',1).T.values
+    y = weights_dict['dstiff'].drop('name',1).drop('dim',1).values
+    dstff_matrix = x * y
     
-    x = colourmap_dict['dstiff'].drop('频率',1).T.as_matrix()
-    y = weights_dict['dstiff'].drop('name',1).drop('dim',1).as_matrix()
-    dstff_matrix =  x * y
+    x = colourmap_dict['ntf_dr'].drop('频率',1).T.values
+    y = weights_dict['ntf_dr'].drop('name',1).drop('dim',1).values
+    ntf_dr_matrix = x * y
     
-    x = colourmap_dict['ntf_dr'].drop('频率',1).T.as_matrix()
-    y = weights_dict['ntf_dr'].drop('name',1).drop('dim',1).as_matrix()
-    ntf_dr_matrix =  x * y
+    x = colourmap_dict['ntf_rr'].drop('频率',1).T.values
+    y = weights_dict['ntf_rr'].drop('name',1).drop('dim',1).values
+    ntf_rr_matrix = x * y
     
-    x = colourmap_dict['ntf_rr'].drop('频率',1).T.as_matrix()
-    y = weights_dict['ntf_rr'].drop('name',1).drop('dim',1).as_matrix()
-    ntf_rr_matrix =  x * y
+    x = colourmap_dict['spindle_ntf_dr'].drop('频率',1).T.values
+    y = weights_dict['spindle_ntf_dr'].drop('name',1).drop('dim',1).values
+    spindle_dr_matrix = x * y
     
-    x = colourmap_dict['spindle_dr'].drop('频率',1).T.as_matrix()
-    y = weights_dict['spindle_dr'].drop('name',1).drop('dim',1).as_matrix()
-    spindle_dr_matrix =  x * y
-    
-    x = colourmap_dict['spindle_rr'].drop('频率',1).T.as_matrix()
-    y = weights_dict['spindle_rr'].drop('name',1).drop('dim',1).as_matrix()
-    spindle_rr_matrix =  x * y
+    x = colourmap_dict['spindle_ntf_rr'].drop('频率',1).T.values
+    y = weights_dict['spindle_ntf_rr'].drop('name',1).drop('dim',1).values
+    spindle_rr_matrix = x * y
     
     DR_score = []
     for index, (d, ntf, spin) in enumerate(zip(dstff_matrix.T, ntf_dr_matrix.T, spindle_dr_matrix.T)):
@@ -200,7 +199,7 @@ def Multi_Score_Predict(colourmap_dict, weights_dict, adjust_value=115):
 
 def test():
     ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_Dstiff.xlsx')
-    dstiff_colourmap = ntf_colourmap(ori_df)
+    dstiff_colourmap_data = dstiff_colourmap(ori_df)
 
     ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_NTF-DR.xlsx')
     ntf_dr_colourmap = ntf_colourmap(ori_df, 'ntf')
@@ -215,7 +214,7 @@ def test():
     spindle_rr_colourmap = ntf_colourmap(ori_df, 'spindle_ntf')
 
     colourmap_dict = {}
-    colourmap_dict['dstiff'] = dstiff_colourmap
+    colourmap_dict['dstiff'] = dstiff_colourmap_data
     colourmap_dict['ntf_dr'] = ntf_dr_colourmap
     colourmap_dict['ntf_rr'] = ntf_rr_colourmap
     colourmap_dict['spindle_dr'] = spindle_dr_colourmap

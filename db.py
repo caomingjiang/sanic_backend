@@ -710,6 +710,44 @@ class ActualTestData(Base):
     )
 
 
+class ColorMapActualTestData(Base):
+    __tablename__ = 'c_color_map_actual_test_data'
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    dr_value = Column(Float, nullable=False, comment="实测_Driver权重值")
+    rr_value = Column(Float, nullable=False, comment="实测_RR-Passenger权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', unique=True),
+        {'comment': 'ColorMap ActualTestData表'}
+    )
+
+
+class TotalColorMapData(Base):
+    __tablename__ = 'c_total_color_map_data'
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    frequency_range = Column(String(128), nullable=False, comment='频率范围')
+    dr_value = Column(Float, nullable=False, comment="实测_Driver权重值")
+    rr_value = Column(Float, nullable=False, comment="实测_RR-Passenger权重值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', unique=True),
+        {'comment': 'TotalColorMapData表'}
+    )
+
+
 class CarExcelData(Base):
     __tablename__ = 'car_excel_data'
     DATA_TYPE_CHOICES = (
