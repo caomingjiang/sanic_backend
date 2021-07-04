@@ -21,11 +21,13 @@ def get_sound_predict_data(se):
         cma_dr_list.append(cma_data.dr_value)
         cma_rr_list.append(cma_data.rr_value)
     tcm_dr_list, tcm_rr_list = [], []
+    new_xaxis_list = []
     for tcm_data in tcm_datas:
+        new_xaxis_list.append(tcm_data.frequency_range)
         tcm_dr_list.append(tcm_data.dr_value)
         tcm_rr_list.append(tcm_data.rr_value)
     ret_data = {
-        'xaxis_list': xaxis_list,
+        'xaxis_list': xaxis_list or new_xaxis_list,
         'cma_dr_list': cma_dr_list,
         'cma_rr_list': cma_rr_list,
         'tcm_dr_list': tcm_dr_list,
