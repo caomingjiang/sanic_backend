@@ -65,7 +65,7 @@ def common_get_car_info(se):
     else:
         car_obj = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
         if not car_obj:
-            car_obj = se.query(CarInfo).all().first()
+            car_obj = se.query(CarInfo).first()
     if not car_obj:
         return JsonResponse.fail('请增加车型')
     car_test_obj = se.query(CarTestInfo).filter(
