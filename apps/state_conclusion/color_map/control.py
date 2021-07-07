@@ -1,5 +1,6 @@
-from db import ColorMapDstiff, ColorMapNtfDr, ColorMapNtfRr, ColorMapSpindleNtfDr, ColorMapSpindleNtfRr
+from db import ColorMapDstiff, ColorMapNtfDr, ColorMapNtfRr, ColorMapSpindleNtfDr, ColorMapSpindleNtfRr, ModalMap
 from collections import defaultdict
+from common.common import get_orm_comment_dic
 
 
 class ColorMapData(object):
@@ -33,6 +34,30 @@ class ColorMapData(object):
         }
         return ret_data
 
+    def modal_map_data(self):
+        comment_dic = get_orm_comment_dic(ModalMap)
+        [comment_dic.pop(key) for key in ['车型', '值范围', '更新时间', '创建时间']]
+        sort_comment_list = list(comment_dic.items())[::-1]
+        y_axis = [y[0] for y in sort_comment_list]
+        x_axis = []
+        color_data = []
+        modal_map_objs = list(self.se.query(ModalMap).filter(
+            ModalMap.car_info == self.car_info
+        ).order_by(ModalMap.id.asc()))
+        for x_index, modal_map in enumerate(modal_map_objs):
+            x_axis.append(modal_map.value_range)
+            for y_index, y_list in enumerate(sort_comment_list):
+                value = getattr(modal_map, y_list[1]) or '-'
+                color_data.append([
+                    x_index, y_index, value
+                ])
+        ret_data = {
+            'x_axis': x_axis,
+            'y_axis': y_axis,
+            'color_data': color_data,
+        }
+        return ret_data
+
     def dstiff_data(self):
         ret_data = self.search_data(ColorMapDstiff)
         return ret_data
@@ -54,6 +79,7 @@ class ColorMapData(object):
         return ret_data
 
     def get_data(self):
+        modal_map = self.modal_map_data()
         dstiff = self.dstiff_data()
         ntf_dr = self.ntf_dr_data()
         ntf_rr = self.ntf_rr_data()
@@ -61,6 +87,7 @@ class ColorMapData(object):
         spindle_ntf_rr = self.spindle_ntf_rr_data()
 
         ret_data = {
+            'modal_map': modal_map,
             'dstiff': dstiff,
             'ntf_dr': ntf_dr,
             'ntf_rr': ntf_rr,
