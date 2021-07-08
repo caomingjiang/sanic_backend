@@ -13,6 +13,20 @@ engine = create_engine('mysql+pymysql://{user}:{password}@{host}:{port}/{db}'.fo
 Base = declarative_base()
 
 
+class DataConfigs:
+    BS_TYPE_CHOICES = (
+        ('multi_link', '多连杆式'),
+        ('torsion_beam', '扭转梁式'),
+    )
+
+    BACKEND_SUSPENSION_CONFS = {
+        "五连杆式": "multi_link",
+        "四连杆式": "multi_link",
+        "扭转梁式": "torsion_beam",
+        "潘哈杆式": "torsion_beam"
+    }
+
+
 class Role(Base):
     """
     角色
@@ -813,8 +827,8 @@ class CarBody(Base):
     )
 
 
-class DesignLibrary(Base):
-    __tablename__ = 'design_library'
+class WDesignLibrary(Base):
+    __tablename__ = 'w_design_library'
     DATA_TYPE_CHOICES = (
         ('cring_vc', 'C ring'),
         ('no1_beam_vc', '一号梁'),
@@ -828,9 +842,7 @@ class DesignLibrary(Base):
     )
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
-    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), unique=True, comment="数据类型")
     poor_design_1 = Column(String(250), comment='较差设计1')
     poor_design_2 = Column(String(250), comment='较差设计2')
     low_cost_scheme = Column(String(250), comment='低成本优化方案')
@@ -855,8 +867,7 @@ class WCarExcelData(Base):
     )
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     excel_name = Column(String(128), comment='excel文件名称')
     excel_path = Column(String(250), comment='excel文件路径')
@@ -864,7 +875,7 @@ class WCarExcelData(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        Index('bs_type_data_type', 'bs_type', 'data_type', unique=True),
         {'comment': '专家设定-车型目标权重excel对应表'}
     )
 
@@ -905,8 +916,7 @@ class WDstiff(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -914,7 +924,7 @@ class WDstiff(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        Index('bs_type_frequency_range', 'bs_type', 'frequency_range', 'data_type', unique=True),
         {'comment': '专家设定Dstiff权重表'}
     )
 
@@ -962,8 +972,7 @@ class WNtfDr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -971,7 +980,7 @@ class WNtfDr(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        Index('bs_type_frequency_range', 'bs_type', 'frequency_range', 'data_type', unique=True),
         {'comment': '专家设定NtfDr权重表'}
     )
 
@@ -1019,8 +1028,7 @@ class WNtfRr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -1028,7 +1036,7 @@ class WNtfRr(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        Index('bs_type_frequency_range', 'bs_type', 'frequency_range', 'data_type', unique=True),
         {'comment': '专家设定NtfRr权重表'}
     )
 
@@ -1061,8 +1069,7 @@ class WSpindleNtfDr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -1070,7 +1077,7 @@ class WSpindleNtfDr(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        Index('bs_type_frequency_range', 'bs_type', 'frequency_range', 'data_type', unique=True),
         {'comment': '专家设定SpindleNtfDr权重表'}
     )
 
@@ -1103,8 +1110,7 @@ class WSpindleNtfRr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -1112,7 +1118,7 @@ class WSpindleNtfRr(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_frequency_range', 'car_info_id', 'frequency_range', 'data_type', unique=True),
+        Index('bs_type_frequency_range', 'bs_type', 'frequency_range', 'data_type', unique=True),
         {'comment': '专家设定SpindleNtfRr权重表'}
     )
 
@@ -1124,12 +1130,11 @@ class WSpindleNtfRr(Base):
         return ret_data
 
 
-class SCarFileData(Base):
-    __tablename__ = 's_car_file_data'
+class WSCarFileData(Base):
+    __tablename__ = 'w_s_car_file_data'
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, unique=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), unique=True, nullable=False, comment='后副车架形式')
     file_name = Column(String(128), comment='json文件名称')
     file_path = Column(String(250), comment='json文件路径')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
@@ -1140,8 +1145,8 @@ class SCarFileData(Base):
     )
 
 
-class AticPkgConfs(Base):
-    __tablename__ = 'atic_pkg_confs'
+class WAticPkgConfs(Base):
+    __tablename__ = 'w_atic_pkg_confs'
     DATA_TYPE_CHOICES = (
         ("fwsa_aoc", "前围吸隔声_落水槽盖板空调新风口吸音棉Absorber on cowl"),
         ("fwsa_fa", "前围吸隔声_前翼子板吸音棉Fender absorber"),
@@ -1171,19 +1176,17 @@ class AticPkgConfs(Base):
     )
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     conf_item = Column(String(128), nullable=False, comment='策略选型')
     weight = Column(Float(precision='10,2'), nullable=False, comment='重量')
     score = Column(Float(precision='10,2'), nullable=False, comment='分值')
     cost = Column(Float(precision='10,2'), nullable=False, comment='成本')
-    is_active = Column(Boolean, nullable=False, default=False, comment='是否当前选中')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type_conf_item', 'car_info_id', 'data_type', 'conf_item', unique=True),
+        Index('bs_type_data_type_conf_item', 'bs_type', 'data_type', 'conf_item', unique=True),
         {'comment': '声学包表'}
     )
 
@@ -1204,8 +1207,7 @@ class WCarFileData(Base):
     ]
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     file_name = Column(String(128), comment='json文件名称')
     file_path = Column(String(250), comment='json文件路径')
@@ -1213,7 +1215,7 @@ class WCarFileData(Base):
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        Index('bs_type_data_type', 'bs_type', 'data_type', unique=True),
         {'comment': '专家设定-单值输入配置文件表'}
     )
 
@@ -1236,15 +1238,14 @@ class WChassisBase(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
     value = Column(String(1000), comment="值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        Index('bs_type_data_type', 'bs_type', 'data_type', unique=True),
         {'comment': '专家设定-底盘-基本信息'}
     )
 
@@ -1288,15 +1289,14 @@ class WChassisDetail(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
     value = Column(String(1000), comment="刚度比")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        Index('bs_type_data_type', 'bs_type', 'data_type', unique=True),
         {'comment': '专家设定-底盘-详细信息'}
     )
 
@@ -1333,15 +1333,14 @@ class WCarBody(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
     value = Column(String(1000), comment="值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        Index('bs_type_data_type', 'bs_type', 'data_type', unique=True),
         {'comment': '专家设定-车身'}
     )
 

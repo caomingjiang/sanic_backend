@@ -6,9 +6,9 @@ import json
 
 
 class SingleDataConfsMethods(object):
-    def __init__(self, excel_path, car_id, se):
+    def __init__(self, excel_path, bs_type, se):
         self.full_file_path = os.path.join(UPLOAD_DIR, excel_path)
-        self.car_id = car_id
+        self.bs_type = bs_type
         self.se = se
 
     def common_save(self, table_model):
@@ -20,12 +20,12 @@ class SingleDataConfsMethods(object):
         for type_name, value_list in data.items():
             data_type = comment_dic[type_name.replace('_', ' -- ')]
             save_dic = {
-                'car_info_id': self.car_id, 'data_type': data_type,
+                'bs_type': self.bs_type, 'data_type': data_type,
                 'value': json.dumps(value_list, ensure_ascii=False),
                 'update_time': now, 'create_time': now
             }
             insert_list.append(table_model(**save_dic))
-        self.se.query(table_model).filter(table_model.car_info_id == self.car_id).delete()
+        self.se.query(table_model).filter(table_model.bs_type == self.bs_type).delete()
         self.se.add_all(insert_list)
         self.se.commit()
 
@@ -39,8 +39,8 @@ class SingleDataConfsMethods(object):
         self.common_save(WCarBody)
 
 
-def get_current_car_file_data(se, car_info):
-    car_files = se.query(WCarFileData).filter(WCarFileData.car_info == car_info).all()
+def get_current_car_file_data(se, bs_type):
+    car_files = se.query(WCarFileData).filter(WCarFileData.bs_type == bs_type).all()
     car_files_dic = {data.data_type: data for data in car_files}
 
     ret_data = {}

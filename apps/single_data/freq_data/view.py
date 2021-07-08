@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from apps.single_data.freq_data.control import SaveExcelData, get_current_car_excel_data, get_freq_data_car_selects
 from common.common import JsonResponse, login_required, view_exception
-from db import CarInfo, CarExcelData
+from db import CarInfo, CarExcelData, DataConfigs
 from common import data_validate
 from datetime import datetime
 
@@ -32,13 +32,15 @@ def save_freq_data(se):
     car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
     if not car_info:
         return JsonResponse.fail('请先设置当前车型')
+    backend_suspension = car_info.backend_suspension
+    bs_type = DataConfigs.BACKEND_SUSPENSION_CONFS[backend_suspension]
 
     now = datetime.now()
     excel_name, excel_path = None, None
     if req_data.excel_info:
         excel_name = req_data.excel_info[0].name
         excel_path = req_data.excel_info[0].url
-        save_obj = SaveExcelData(excel_path, car_info.id, se)
+        save_obj = SaveExcelData(excel_path, car_info.id, bs_type, se)
         getattr(save_obj, f'save_{req_data.save_type}')()
 
     active_car_excel = se.query(CarExcelData).filter(

@@ -1,5 +1,5 @@
 import os
-from db import SCarFileData, AticPkgConfs
+from db import WSCarFileData, WAticPkgConfs
 from confs.config import UPLOAD_DIR
 import pandas as pd
 from datetime import datetime
@@ -8,15 +8,15 @@ import json
 
 
 class AticPkgConfsData(object):
-    def __init__(self, file_path, car_id, se):
+    def __init__(self, file_path, bs_type, se):
         self.full_excel_path = os.path.join(UPLOAD_DIR, file_path)
-        self.car_id = car_id
+        self.bs_type = bs_type
         self.se = se
 
     def common_method(self, table_model):
         now = datetime.now()
-        apc_objs = self.se.query(AticPkgConfs).filter(
-            AticPkgConfs.car_info_id == self.car_id, AticPkgConfs.is_active == 1
+        apc_objs = self.se.query(WAticPkgConfs).filter(
+            WAticPkgConfs.bs_type == self.bs_type, WAticPkgConfs.is_active == 1
         )
         apc_obj_dic = {
             apc_obj.data_type: apc_obj.conf_item for apc_obj in apc_objs
@@ -33,21 +33,21 @@ class AticPkgConfsData(object):
                 weight, score, cost = value_list
                 is_active = True if conf_item == active_conf_item else False
                 save_dic = {
-                    "car_info_id": self.car_id, "data_type": data_type, "conf_item": conf_item,
+                    "bs_type": self.bs_type, "data_type": data_type, "conf_item": conf_item,
                     "weight": weight, "score": score, "cost": cost, "is_active": is_active,
                     "update_time": now, "create_time": now
                 }
-                insert_list.append(AticPkgConfs(**save_dic))
-        self.se.query(AticPkgConfs).filter(AticPkgConfs.car_info_id == self.car_id).delete()
+                insert_list.append(WAticPkgConfs(**save_dic))
+        self.se.query(WAticPkgConfs).filter(WAticPkgConfs.bs_type == self.bs_type).delete()
         self.se.add_all(insert_list)
         self.se.commit()
 
     def save_data(self):
-        self.common_method(AticPkgConfs)
+        self.common_method(WAticPkgConfs)
 
 
-def get_current_car_file_data(se, car_info):
-    car_file = se.query(SCarFileData).filter(SCarFileData.car_info == car_info).first()
+def get_current_car_file_data(se, bs_type):
+    car_file = se.query(WSCarFileData).filter(WSCarFileData.bs_type == bs_type).first()
 
     file_name, file_path = None, None
     if car_file:

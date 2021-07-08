@@ -24,9 +24,10 @@ pd.set_option('max_colwidth', 100)
 
 
 class SaveExcelData(object):
-    def __init__(self, excel_path, car_id, se):
+    def __init__(self, excel_path, car_id, bs_type, se):
         self.full_excel_path = os.path.join(UPLOAD_DIR, excel_path)
         self.car_id = car_id
+        self.bs_type = bs_type
         self.se = se
 
     def common_update(self, df, table_model):
@@ -104,7 +105,7 @@ class SaveExcelData(object):
         self.se.commit()
 
     @staticmethod
-    def cal_total_color_map(car_id, save_type, color_map_df):
+    def cal_total_color_map(car_id, save_type, color_map_df, bs_type):
         se = Session()
         try:
             data_types = ['dstiff', 'ntf_dr', 'ntf_rr', 'spindle_ntf_dr', 'spindle_ntf_rr']
@@ -129,7 +130,7 @@ class SaveExcelData(object):
             colourmap_dict.update({save_type: color_map_df})
             if len(data_types) != len(list(colourmap_dict.keys())):
                 raise Exception('原始输入文件不足')
-            w_car_files = se.query(WCarExcelData).filter(WCarExcelData.car_info_id == car_id)
+            w_car_files = se.query(WCarExcelData).filter(WCarExcelData.bs_type == bs_type)
             weights_dict = {}
             for w_car_file in w_car_files:
                 excel_path = w_car_file.excel_path
@@ -158,27 +159,37 @@ class SaveExcelData(object):
     def save_dstiff(self):
         self.common_method(Dstiff)
         color_map_df = self.save_color_map(ColorMapDstiff, dstiff_colourmap, dstiff=True)
-        CommonThreadPool.submit(self.cal_total_color_map, self.car_id, 'dstiff', color_map_df)
+        CommonThreadPool.submit(
+            self.cal_total_color_map, self.car_id, 'dstiff', color_map_df, self.bs_type
+        )
 
     def save_ntf_dr(self):
         self.common_method(NtfDr)
         color_map_df = self.save_color_map(ColorMapNtfDr, ntf_colourmap, ntf_str='ntf')
-        self.cal_total_color_map(self.car_id, 'ntf_dr', color_map_df)
+        CommonThreadPool.submit(
+            self.cal_total_color_map, self.car_id, 'ntf_dr', color_map_df, self.bs_type
+        )
 
     def save_ntf_rr(self):
         self.common_method(NtfRr)
         color_map_df = self.save_color_map(ColorMapNtfRr, ntf_colourmap, ntf_str='ntf')
-        CommonThreadPool.submit(self.cal_total_color_map, self.car_id, 'ntf_rr', color_map_df)
+        CommonThreadPool.submit(
+            self.cal_total_color_map, self.car_id, 'ntf_rr', color_map_df, self.bs_type
+        )
 
     def save_spindle_ntf_dr(self):
         self.common_method(SpindleNtfDr)
         color_map_df = self.save_color_map(ColorMapSpindleNtfDr, ntf_colourmap, ntf_str='spindle_ntf')
-        CommonThreadPool.submit(self.cal_total_color_map, self.car_id, 'spindle_ntf_dr', color_map_df)
+        CommonThreadPool.submit(
+            self.cal_total_color_map, self.car_id, 'spindle_ntf_dr', color_map_df, self.bs_type
+        )
 
     def save_spindle_ntf_rr(self):
         self.common_method(SpindleNtfRr)
         color_map_df = self.save_color_map(ColorMapSpindleNtfRr, ntf_colourmap, ntf_str='spindle_ntf')
-        CommonThreadPool.submit(self.cal_total_color_map, self.car_id, 'spindle_ntf_rr', color_map_df)
+        CommonThreadPool.submit(
+            self.cal_total_color_map, self.car_id, 'spindle_ntf_rr', color_map_df, self.bs_type
+        )
 
     def save_actual_test_data(self):
         self.common_method(ActualTestData)

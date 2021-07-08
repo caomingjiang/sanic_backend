@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from common.common import JsonResponse, login_required, view_exception
-from db import CarInfo, DesignLibrary
+from db import CarInfo, WDesignLibrary
 from common import data_validate
 from datetime import datetime
 from apps.expert_setting.design_library.control import AnalysisDesignLibraryZip
@@ -14,10 +14,9 @@ bp = Blueprint('design_library', __name__, url_prefix='/api/v1/design_library/')
 @view_exception(fail_msg='save_design_library_data failed', db_session=True)
 def save_design_library_data(se):
     req_data = data_validate.SaveDesignLibrary(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
-    dl_obj = se.query(DesignLibrary).filter(
-        DesignLibrary.car_info == car_info, DesignLibrary.data_type == req_data.data_type
+    dl_obj = se.query(WDesignLibrary).filter(
+        WDesignLibrary.data_type == req_data.data_type
     ).first()
     now = datetime.now()
     save_data = json.dumps([im.dict() for im in req_data.images], ensure_ascii=False)
@@ -26,10 +25,10 @@ def save_design_library_data(se):
         dl_obj.update_time = now
     else:
         save_dic = {
-            'car_info': car_info, 'data_type': req_data.data_type,
-            req_data.col: save_data, 'update_time': now, 'create_time': now
+            'data_type': req_data.data_type, req_data.col: save_data,
+            'update_time': now, 'create_time': now
         }
-        se.add(DesignLibrary(**save_dic))
+        se.add(WDesignLibrary(**save_dic))
     se.commit()
     return JsonResponse.success()
 
@@ -38,14 +37,12 @@ def save_design_library_data(se):
 @login_required
 @view_exception(fail_msg='get_design_library_data failed', db_session=True)
 def get_design_library_data(se):
-    req_data = data_validate.GetDesignLibrary(**request.args.to_dict())
-    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
-    dls = se.query(DesignLibrary).filter(DesignLibrary.car_info == car_info)
+    dls = se.query(WDesignLibrary).all()
     dl_dic = {
         dl.data_type.code: dl for dl in dls
     }
     ret_data = {}
-    for data_type, type_name in DesignLibrary.DATA_TYPE_CHOICES:
+    for data_type, type_name in WDesignLibrary.DATA_TYPE_CHOICES:
         single_data = dl_dic.get(data_type)
         if single_data:
             poor_design_1 = single_data.poor_design_1 or '[]'
@@ -82,9 +79,8 @@ def get_design_library_data(se):
 @view_exception(fail_msg='analysis_design_library_zip failed', db_session=True)
 def analysis_design_library_zip(se):
     req_data = data_validate.AnalysisDesignLibraryZip(**request.json)
-    car_info = se.query(CarInfo).filter(CarInfo.id == req_data.car_id).first()
 
-    adlz_obj = AnalysisDesignLibraryZip(se, car_info, req_data.url)
+    adlz_obj = AnalysisDesignLibraryZip(se, req_data.url)
     adlz_obj.save_zip()
     return JsonResponse.success()
 
@@ -94,11 +90,8 @@ def analysis_design_library_zip(se):
 @view_exception(fail_msg='analysis_design_get_dev_lib failed', db_session=True)
 def analysis_design_get_dev_lib(se):
     req_data = data_validate.GetDevLib(**request.args.to_dict())
-    car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
-    if not car_info:
-        return JsonResponse.fail('请先设置当前车型')
-    design_lib = se.query(DesignLibrary).filter(
-        DesignLibrary.car_info == car_info, DesignLibrary.data_type == req_data.data_type
+    design_lib = se.query(WDesignLibrary).filter(
+        WDesignLibrary.data_type == req_data.data_type
     ).first()
     ret_data = {
         'poor_design_1': '',

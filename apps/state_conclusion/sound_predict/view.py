@@ -1,6 +1,8 @@
 from flask import Blueprint
 from common.common import JsonResponse, login_required, view_exception
-from db import CarInfo, ColorMapActualTestData, TotalColorMapData
+from db import CarInfo, ColorMapActualTestData, TotalColorMapData, DataConfigs
+from apps.state_conclusion.sound_predict.control import cal_total_color_map
+from confs.config import CommonThreadPool
 
 bp = Blueprint('sound_predict', __name__, url_prefix='/api/v1/sound_predict/')
 
@@ -17,7 +19,13 @@ def get_sound_predict_data(se):
     ).order_by(ColorMapActualTestData.id.asc())
     tcm_datas = se.query(TotalColorMapData).filter(
         TotalColorMapData.car_info == car_info
-    ).order_by(TotalColorMapData.id.asc())
+    ).order_by(TotalColorMapData.id.asc()).all()
+
+    if not tcm_datas:
+        backend_suspension = car_info.backend_suspension
+        bs_type = DataConfigs.BACKEND_SUSPENSION_CONFS[backend_suspension]
+        CommonThreadPool.submit(cal_total_color_map, car_info.id, bs_type)
+
     xaxis_list = []
     cma_dr_list, cma_rr_list = [], []
     for cma_data in cma_datas:

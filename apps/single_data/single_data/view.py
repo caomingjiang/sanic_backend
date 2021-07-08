@@ -4,7 +4,7 @@ from flask import Blueprint, request, Response
 from common.common import JsonResponse, login_required, view_exception
 from common.loggers import code_log
 from apps.single_data.single_data.control import ExportSingleData
-from db import CarInfo, ChassisBase, ChassisDetail, WCarFileData
+from db import CarInfo, ChassisBase, ChassisDetail, WCarFileData, DataConfigs
 from common import data_validate
 from datetime import datetime
 from confs.config import UPLOAD_DIR
@@ -112,8 +112,10 @@ def cal_base_score(se):
     car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
     if not car_info:
         return JsonResponse.fail('请先设置当前车型')
+    backend_suspension = car_info.backend_suspension
+    bs_type = DataConfigs.BACKEND_SUSPENSION_CONFS[backend_suspension]
     w_car_file = se.query(WCarFileData).filter(
-        WCarFileData.car_info == car_info, WCarFileData.data_type == 'subframe'
+        WCarFileData.bs_type == bs_type, WCarFileData.data_type == 'subframe'
     ).first()
     if not w_car_file:
         return JsonResponse.fail("缺少专家设定数据")
@@ -142,8 +144,10 @@ def cal_detail_score(se):
     car_info = se.query(CarInfo).filter(CarInfo.is_dev == 1).first()
     if not car_info:
         return JsonResponse.fail('请先设置当前车型')
+    backend_suspension = car_info.backend_suspension
+    bs_type = DataConfigs.BACKEND_SUSPENSION_CONFS[backend_suspension]
     w_car_file = se.query(WCarFileData).filter(
-        WCarFileData.car_info == car_info, WCarFileData.data_type == 'lower_arm'
+        WCarFileData.bs_type == bs_type, WCarFileData.data_type == 'lower_arm'
     ).first()
     if not w_car_file:
         return JsonResponse.fail("缺少专家设定数据")
