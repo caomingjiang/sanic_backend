@@ -18,11 +18,11 @@ def get_risk_tik_data(se):
         return JsonResponse.fail('请先设置当前车型')
 
     modal_map_dic = get_modal_map_risk_dic(se, car_info)
-    dstiff_dic = get_risk_tik_dict(se, ColorMapDstiff, car_info)
-    ntf_dr_dic = get_risk_tik_dict(se, ColorMapNtfDr, car_info)
-    ntf_rr_dic = get_risk_tik_dict(se, ColorMapNtfRr, car_info)
-    spindle_ntf_dr_dic = get_risk_tik_dict(se, ColorMapSpindleNtfDr, car_info)
-    spindle_ntf_rr_dic = get_risk_tik_dict(se, ColorMapSpindleNtfRr, car_info)
+    dstiff_dic = get_risk_tik_dict(se, ColorMapDstiff, car_info, 'Dstiff')
+    ntf_dr_dic = get_risk_tik_dict(se, ColorMapNtfDr, car_info, 'NTF DR')
+    ntf_rr_dic = get_risk_tik_dict(se, ColorMapNtfRr, car_info, 'NTF RR')
+    spindle_ntf_dr_dic = get_risk_tik_dict(se, ColorMapSpindleNtfDr, car_info, 'Spindle NTF DR')
+    spindle_ntf_rr_dic = get_risk_tik_dict(se, ColorMapSpindleNtfRr, car_info, 'Spindle NTF RR')
 
     dr_risk = get_dr_risk(modal_map_dic, dstiff_dic, ntf_dr_dic, spindle_ntf_dr_dic)
     rr_risk = get_rr_risk(modal_map_dic, dstiff_dic, ntf_rr_dic, spindle_ntf_rr_dic)
