@@ -1,9 +1,7 @@
 import os
 from db import WSCarFileData, WAticPkgConfs
 from confs.config import UPLOAD_DIR
-import pandas as pd
 from datetime import datetime
-from collections import defaultdict
 import json
 
 
@@ -15,12 +13,6 @@ class AticPkgConfsData(object):
 
     def common_method(self, table_model):
         now = datetime.now()
-        apc_objs = self.se.query(WAticPkgConfs).filter(
-            WAticPkgConfs.bs_type == self.bs_type
-        )
-        apc_obj_dic = {
-            apc_obj.data_type: apc_obj.conf_item for apc_obj in apc_objs
-        }
         comment_dic = table_model.comment_dic()
         with open(self.full_excel_path, 'rb+') as f:
             source_data = json.loads(f.read())
