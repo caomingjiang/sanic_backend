@@ -16,7 +16,7 @@ class AticPkgConfsData(object):
     def common_method(self, table_model):
         now = datetime.now()
         apc_objs = self.se.query(WAticPkgConfs).filter(
-            WAticPkgConfs.bs_type == self.bs_type, WAticPkgConfs.is_active == 1
+            WAticPkgConfs.bs_type == self.bs_type
         )
         apc_obj_dic = {
             apc_obj.data_type: apc_obj.conf_item for apc_obj in apc_objs
@@ -27,14 +27,11 @@ class AticPkgConfsData(object):
         insert_list = []
         for type_name, conf_dic in source_data.items():
             data_type = comment_dic.get(type_name)
-            active_conf_item = apc_obj_dic.get(data_type)
-            active_conf_item = active_conf_item or list(conf_dic.keys())[0]
             for conf_item, value_list in conf_dic.items():
                 weight, score, cost = value_list
-                is_active = True if conf_item == active_conf_item else False
                 save_dic = {
                     "bs_type": self.bs_type, "data_type": data_type, "conf_item": conf_item,
-                    "weight": weight, "score": score, "cost": cost, "is_active": is_active,
+                    "weight": weight, "score": score, "cost": cost,
                     "update_time": now, "create_time": now
                 }
                 insert_list.append(WAticPkgConfs(**save_dic))
