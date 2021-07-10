@@ -8,8 +8,9 @@ def init_user():
     try:
         now = datetime.now()
         role_data = {
-            1: '普通管理员',
-            2: '超级管理员'
+            1: '超级管理员',
+            2: '普通管理员',
+            3: '专家',
         }
         for code, name in role_data.items():
             role = se.query(Role).filter(Role.code == code).first()
@@ -23,10 +24,22 @@ def init_user():
         user_data = [
             {
                 'account': 'luzao123',
-                'username': '管理员',
+                'username': '超级管理员',
                 'password': 'test123',
                 'role_code': 1
-            }
+            },
+            {
+                'account': 'luzao1',
+                'username': '普通管理员',
+                'password': 'pt@-123',
+                'role_code': 2
+            },
+            {
+                'account': 'luzao2',
+                'username': '专家',
+                'password': 'zj@-456',
+                'role_code': 3
+            },
         ]
         for user_dic in user_data:
             user = se.query(User).filter(User.account == user_dic['account']).first()
