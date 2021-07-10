@@ -159,43 +159,71 @@ def realcapture_colourmap(ori_df):
 
     return score_df
 
+def sum_matrix(matrix):
+    return sum(np.sum(matrix,axis=0))
+
+
 def Multi_Score_Predict(colourmap_dict, weights_dict, adjust_value=115):
     '''
-    colourmap_dict : dstff_df, ntf_df, spindle_ntf_df, 
+    colourmap_dict : dstff_df, ntf_df, spindle_ntf_df,
     weights_map : weights_df
     '''
-    x = colourmap_dict['dstiff'].drop('频率',1).T.values
-    y = weights_dict['dstiff'].drop('name',1).drop('dim',1).values
+    sub_score = {}
+    x = colourmap_dict['dstiff'].drop('频率', 1).T.values
+    y = weights_dict['dstiff'].drop('name', 1).drop('dim', 1).values
     dstff_matrix = x * y
-    
-    x = colourmap_dict['ntf_dr'].drop('频率',1).T.values
-    y = weights_dict['ntf_dr'].drop('name',1).drop('dim',1).values
+
+    full_score = np.array([[10] * len(x[0])] * len(x))
+    sub_dstff = full_score * y
+    sub_score['dstiff'] = sum_matrix(dstff_matrix) / sum_matrix(sub_dstff) * 100
+
+    ##########################################################
+    x = colourmap_dict['ntf_dr'].drop('频率', 1).T.values
+    y = weights_dict['ntf_dr'].drop('name', 1).drop('dim', 1).values
     ntf_dr_matrix = x * y
-    
-    x = colourmap_dict['ntf_rr'].drop('频率',1).T.values
-    y = weights_dict['ntf_rr'].drop('name',1).drop('dim',1).values
+
+    full_score = np.array([[10] * len(x[0])] * len(x))
+    sub_ntf_dr = full_score * y
+    sub_score['ntf_dr'] = sum_matrix(ntf_dr_matrix) / sum_matrix(sub_ntf_dr) * 100
+
+    ##########################################################
+    x = colourmap_dict['ntf_rr'].drop('频率', 1).T.values
+    y = weights_dict['ntf_rr'].drop('name', 1).drop('dim', 1).values
     ntf_rr_matrix = x * y
-    
-    x = colourmap_dict['spindle_ntf_dr'].drop('频率',1).T.values
-    y = weights_dict['spindle_ntf_dr'].drop('name',1).drop('dim',1).values
+
+    full_score = np.array([[10] * len(x[0])] * len(x))
+    sub_ntf_rr = full_score * y
+    sub_score['ntf_rr'] = sum_matrix(ntf_rr_matrix) / sum_matrix(sub_ntf_rr) * 100
+
+    ##########################################################
+    x = colourmap_dict['spindle_dr'].drop('频率', 1).T.values
+    y = weights_dict['spindle_dr'].drop('name', 1).drop('dim', 1).values
     spindle_dr_matrix = x * y
-    
-    x = colourmap_dict['spindle_ntf_rr'].drop('频率',1).T.values
-    y = weights_dict['spindle_ntf_rr'].drop('name',1).drop('dim',1).values
+
+    full_score = np.array([[10] * len(x[0])] * len(x))
+    sub_spindle_dr = full_score * y
+    sub_score['spindle_dr'] = sum_matrix(spindle_dr_matrix) / sum_matrix(sub_spindle_dr) * 100
+
+    ##########################################################
+    x = colourmap_dict['spindle_rr'].drop('频率', 1).T.values
+    y = weights_dict['spindle_rr'].drop('name', 1).drop('dim', 1).values
     spindle_rr_matrix = x * y
-    
+
+    full_score = np.array([[10] * len(x[0])] * len(x))
+    sub_spindle_rr = full_score * y
+    sub_score['sub_spindle_rr'] = sum_matrix(spindle_rr_matrix) / sum_matrix(sub_spindle_rr) * 100
+
     DR_score = []
     for index, (d, ntf, spin) in enumerate(zip(dstff_matrix.T, ntf_dr_matrix.T, spindle_dr_matrix.T)):
         aggregate = sum(d) + sum(ntf) + sum(spin)
-        DR_score.append(adjust_value - aggregate/div_hyper_params[index])
-        
+        DR_score.append(adjust_value - aggregate / div_hyper_params[index])
+
     RR_score = []
     for index, (d, ntf, spin) in enumerate(zip(dstff_matrix.T, ntf_rr_matrix.T, spindle_rr_matrix.T)):
         aggregate = sum(d) + sum(ntf) + sum(spin)
-        RR_score.append(adjust_value - aggregate/div_hyper_params[index])
-        
-        
-    return DR_score, RR_score
+        RR_score.append(adjust_value - aggregate / div_hyper_params[index])
+
+    return DR_score, RR_score, sub_score
 
 def test():
     ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_Dstiff.xlsx')
@@ -233,12 +261,49 @@ def test():
     weights_dict['spindle_dr'] = weights_spindle_dr
     weights_dict['spindle_rr'] = weights_spindle_rr
 
-    DR_score, RR_score = Multi_Score_Predict(colourmap_dict, weights_dict)
+    DR_score, RR_score, sub_score = Multi_Score_Predict(colourmap_dict, weights_dict)
 
 if __name__ == "__main__":
     
     ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_实测曲线.xlsx')
     real_colourmap = realcapture_colourmap(ori_df)
+
+    ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_Dstiff.xlsx')
+    dstiff_colourmap_data = dstiff_colourmap(ori_df)
+
+    ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_NTF-DR.xlsx')
+    ntf_dr_colourmap = ntf_colourmap(ori_df, 'ntf')
+
+    ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_NTF-RR.xlsx')
+    ntf_rr_colourmap = ntf_colourmap(ori_df, 'ntf')
+
+    ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_SpindleNTF-DR.xlsx')
+    spindle_dr_colourmap = ntf_colourmap(ori_df, 'spindle_ntf')
+
+    ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_SpindleNTF-RR.xlsx')
+    spindle_rr_colourmap = ntf_colourmap(ori_df, 'spindle_ntf')
+
+    colourmap_dict = {}
+    colourmap_dict['dstiff'] = dstiff_colourmap_data
+    colourmap_dict['ntf_dr'] = ntf_dr_colourmap
+    colourmap_dict['ntf_rr'] = ntf_rr_colourmap
+    colourmap_dict['spindle_dr'] = spindle_dr_colourmap
+    colourmap_dict['spindle_rr'] = spindle_rr_colourmap
+
+    weights_dstiff = pd.read_excel('./权系数/专家权重-DSTIFF.xlsx')
+    weights_ntf_dr = pd.read_excel('./权系数/专家权重-NTF-DR.xlsx')
+    weights_ntf_rr = pd.read_excel('./权系数/专家权重-NTF-RR.xlsx')
+    weights_spindle_dr = pd.read_excel('./权系数/专家权重-Spindle-NTF-DR.xlsx')
+    weights_spindle_rr = pd.read_excel('./权系数/专家权重-Spindle-NTF-RR.xlsx')
+
+    weights_dict = {}
+    weights_dict['dstiff'] = weights_dstiff
+    weights_dict['ntf_dr'] = weights_ntf_dr
+    weights_dict['ntf_rr'] = weights_ntf_rr
+    weights_dict['spindle_dr'] = weights_spindle_dr
+    weights_dict['spindle_rr'] = weights_spindle_rr
+
+    DR_score, RR_score, sub_score = Multi_Score_Predict(colourmap_dict, weights_dict)
     
     fuchejia = {
 	"轮胎_胎面辐射声（轮胎选型）":[[0,10,20,35,50,60], [0, 1,2,4,6,8,10]],
