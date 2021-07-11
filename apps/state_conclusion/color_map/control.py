@@ -141,9 +141,9 @@ class ColorMapData(object):
         elif 2 <= value < 4:
             color = 45
         elif 4 <= value < 6:
-            color = 17
+            color = 34
         elif 6 <= value < 8:
-            color = 50
+            color = 17
         elif 8 <= value <= 10:
             color = 62
         elif value == 0:
