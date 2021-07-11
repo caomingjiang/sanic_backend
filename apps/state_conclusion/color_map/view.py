@@ -29,6 +29,6 @@ def export_acoustic_package_data(se):
     ret_value = color_map.export_excel()
 
     response = Response(ret_value, content_type='application/octet-stream')
-    response.headers['Content-Disposition'] = 'attachment;filename="{0}"'.format('color_map.xls'.encode().decode("latin1"))
+    response.headers['Content-Disposition'] = 'attachment;filename="{0}"'.format('color_map.xlsx'.encode().decode("latin1"))
     return response
 

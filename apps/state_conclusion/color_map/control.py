@@ -1,8 +1,9 @@
+import os
 from db import ColorMapDstiff, ColorMapNtfDr, ColorMapNtfRr, ColorMapSpindleNtfDr, ColorMapSpindleNtfRr, ModalMap
 from collections import defaultdict
 from common.common import get_orm_comment_dic
-import xlwt
-from io import BytesIO
+from confs.config import BASE_DIR
+import xlsxwriter
 
 
 class ColorMapData(object):
@@ -106,81 +107,67 @@ class ColorMapData(object):
         return ret_data
 
     def export_excel(self):
-        wb = xlwt.Workbook(encoding='utf8')
-        ws = wb.add_sheet('color_map')
-        ws.col(0).width = 256 * 25
+        xlsx_path = os.path.join(BASE_DIR, 'tmp_color_map.xlsx')
+        wb = xlsxwriter.Workbook(xlsx_path, {'constant_memory': True})
+        ws = wb.add_worksheet('color_map')
+        ws.set_column(0, 0, 35)
         base_data = self.get_data()
         row_num = 0
+        common_style = self.get_cell_style(wb, 10, '#FFFFFF', bold=True)
         for data_type, data_dic in base_data.items():
             x_axis = data_dic['x_axis']
             y_axis = data_dic['y_axis']
             color_data = data_dic['color_data']
             tmp_rst_data = self.reset_data(x_axis, y_axis, color_data)
-            ws.write(row_num, 0, '', self.get_cell_style(10, 1, bold=True))
+            ws.write(row_num, 0, '', common_style)
             for col, x in enumerate(x_axis):
-                ws.write(row_num, col + 1, x, self.get_cell_style(10, 1, bold=True))
+                ws.write(row_num, col + 1, x, common_style)
             row_num += 1
             y_axis = y_axis[::-1]
             for y in y_axis:
-                ws.write(row_num, 0, y, self.get_cell_style(10, 1, bold=True))
+                ws.write(row_num, 0, y, common_style)
                 for col, x in enumerate(x_axis):
                     tmp_value = tmp_rst_data[y][x]
-                    tmp_stype = self.get_cell_style(10, self.get_color_str(tmp_value), bold=False)
-                    ws.write(row_num, col + 1, tmp_value, tmp_stype)
+                    tmp_style = self.get_cell_style(wb, 10, self.get_color_str(tmp_value), bold=False)
+                    ws.write(row_num, col + 1, tmp_value, tmp_style)
                 row_num += 1
             row_num += 3
-        bio = BytesIO()
-        wb.save(bio)
-        return bio.getvalue()
+        wb.close()
+        with open(xlsx_path, 'rb+') as f:
+            ret_data = f.read()
+        os.remove(xlsx_path)
+        return ret_data
 
     @staticmethod
     def get_color_str(value):
         value = value or 0
         if 0 < value < 2:
-            color = 2
+            color = '#EB0506'
         elif 2 <= value < 4:
-            color = 45
+            color = '#FC777C'
         elif 4 <= value < 6:
-            color = 34
+            color = '#EBEB10'
         elif 6 <= value < 8:
-            color = 17
+            color = '#027F01'
         elif 8 <= value <= 10:
-            color = 62
+            color = '#1E3366'
         elif value == 0:
-            color = 1
+            color = '#FFFFFF'
         else:
-            color = 14
+            color = '#FF00FF'
         return color
 
     @staticmethod
-    def get_cell_style(font_size, back_color, bold=False):
-        style = xlwt.XFStyle()  # 初始化样式
-        font = xlwt.Font()  # 为样式创建字体
-        font.name = 'SimSun'  # 指定“宋体”
-        font.height = 20 * font_size
-        font.bold = bold
-        style.font = font  # 设定样式
-
-        al = xlwt.Alignment()
-        al.horz = 0x02  # 设置水平居中
-        al.vert = 0x01  # 设置垂直居中
-        style.alignment = al
-
-        borders = xlwt.Borders()
-        borders.left = 1
-        borders.right = 1
-        borders.top = 1
-        borders.bottom = 1
-        style.borders = borders
-
-        pattern = xlwt.Pattern()
-        pattern.pattern = xlwt.Pattern.SOLID_PATTERN
-
-        pattern.pattern_fore_colour = back_color
-
-        style.pattern = pattern
-
-        style.alignment.wrap = 1  # 自动换行
+    def get_cell_style(wb, font_size, back_color, bold=False):
+        style = wb.add_format({
+            'bold': bold,
+            'border': 1,
+            'align': 'center',
+            'valign': 'vcenter',
+            'fg_color': back_color,
+            'text_wrap': True,
+            'font_size': font_size
+        })
 
         return style
 
