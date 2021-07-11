@@ -9,7 +9,6 @@ Created on Mon Jun  7 23:41:12 2021
 import pandas as pd 
 import numpy as np
 from ai.map_dict_utils import *
-from ai.hyper_parmas import div_hyper_params
 from bisect import bisect_left, bisect_right
 
 def single_fuchejia_all_func(data_map):
@@ -93,7 +92,7 @@ def single_cheshen_func(key, value, cheshen):
         else:
             return 'error'
 
-def dstiff_colourmap(ori_df):
+def dstiff_colourmap(ori_df, dstiff_target_map):
     '''
     ori_df = pd.read_excel('./最新输入模板，以此为准/原始输入_Dstiff.xlsx')
     '''
@@ -163,10 +162,11 @@ def sum_matrix(matrix):
     return sum(np.sum(matrix,axis=0))
 
 
-def Multi_Score_Predict(colourmap_dict, weights_dict, adjust_value=115):
+def Multi_Score_Predict(colourmap_dict, weights_dict, artifical_params):
     '''
     colourmap_dict : dstff_df, ntf_df, spindle_ntf_df,
-    weights_map : weights_df
+    weights_map : weights_df，
+    artifical_params：人工系数包含调整因子adjust_value和除以系数div_hyper_params(list)
     '''
     sub_score = {}
     x = colourmap_dict['dstiff'].drop('频率', 1).T.values
@@ -216,12 +216,12 @@ def Multi_Score_Predict(colourmap_dict, weights_dict, adjust_value=115):
     DR_score = []
     for index, (d, ntf, spin) in enumerate(zip(dstff_matrix.T, ntf_dr_matrix.T, spindle_dr_matrix.T)):
         aggregate = sum(d) + sum(ntf) + sum(spin)
-        DR_score.append(adjust_value - aggregate / div_hyper_params[index])
+        DR_score.append(artifical_params['adjust_value'] - aggregate / artifical_params['div_hyper_params'][index])
 
     RR_score = []
     for index, (d, ntf, spin) in enumerate(zip(dstff_matrix.T, ntf_rr_matrix.T, spindle_rr_matrix.T)):
         aggregate = sum(d) + sum(ntf) + sum(spin)
-        RR_score.append(adjust_value - aggregate / div_hyper_params[index])
+        RR_score.append(artifical_params['adjust_value'] - aggregate / artifical_params['div_hyper_params'][index])
 
     return DR_score, RR_score, sub_score
 
