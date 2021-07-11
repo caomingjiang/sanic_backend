@@ -2,7 +2,6 @@ import os
 from db import Session, CarExcelData, WCarExcelData, TotalColorMapData, SubsystemScoring, \
     ColorMapActualTestData, DataConfigs
 from ai.noise_algo_func import ntf_colourmap, dstiff_colourmap, Multi_Score_Predict
-from apps.state_conclusion.color_map.control import ColorMapData
 from confs.config import UPLOAD_DIR, CommonThreadPool
 from datetime import datetime
 from common.loggers import code_log
@@ -116,6 +115,38 @@ def get_base_data(se, car_info):
     return ret_data
 
 
+def get_cell_style(font_size, back_color, bold=False):
+    style = xlwt.XFStyle()  # 初始化样式
+    font = xlwt.Font()  # 为样式创建字体
+    font.name = 'SimSun'  # 指定“宋体”
+    font.height = 20 * font_size
+    font.bold = bold
+    style.font = font  # 设定样式
+
+    al = xlwt.Alignment()
+    al.horz = 0x02  # 设置水平居中
+    al.vert = 0x01  # 设置垂直居中
+    style.alignment = al
+
+    borders = xlwt.Borders()
+    borders.left = 1
+    borders.right = 1
+    borders.top = 1
+    borders.bottom = 1
+    style.borders = borders
+
+    pattern = xlwt.Pattern()
+    pattern.pattern = xlwt.Pattern.SOLID_PATTERN
+
+    pattern.pattern_fore_colour = back_color
+
+    style.pattern = pattern
+
+    style.alignment.wrap = 1  # 自动换行
+
+    return style
+
+
 def export_excel(se, car_info):
     base_data = get_base_data(se, car_info)
     wb = xlwt.Workbook(encoding='utf8')
@@ -123,45 +154,45 @@ def export_excel(se, car_info):
     ws.col(0).width = 256 * 20
     row_num = 0
     xaxis = base_data['xaxis_list']
-    ws.write_merge(row_num, row_num, 0, 28, 'Driver', ColorMapData.get_cell_style(11, 57, bold=True))
+    ws.write_merge(row_num, row_num, 0, 28, 'Driver', get_cell_style(11, 57, bold=True))
     row_num += 1
-    ws.write(row_num, 0, '', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '', get_cell_style(11, 1, bold=True))
     for col, x in enumerate(xaxis):
-        ws.write(row_num, col + 1, x, ColorMapData.get_cell_style(11, 1, bold=True))
+        ws.write(row_num, col + 1, x, get_cell_style(11, 1, bold=True))
     row_num += 1
-    ws.write(row_num, 0, '实测值_DR', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '实测值_DR', get_cell_style(11, 1, bold=True))
     for col, value in enumerate(base_data['cma_dr_list']):
-        ws.write(row_num, col + 1, value, ColorMapData.get_cell_style(11, 1, bold=False))
+        ws.write(row_num, col + 1, value, get_cell_style(11, 1, bold=False))
     row_num += 1
-    ws.write(row_num, 0, '识别声压_DR', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '识别声压_DR', get_cell_style(11, 1, bold=True))
     for col, value in enumerate(base_data['tcm_dr_list']):
-        ws.write(row_num, col + 1, value, ColorMapData.get_cell_style(11, 1, bold=False))
+        ws.write(row_num, col + 1, value, get_cell_style(11, 1, bold=False))
 
     row_num += 3
     xaxis = base_data['xaxis_list']
-    ws.write_merge(row_num, row_num, 0, 28, 'RR passenger', ColorMapData.get_cell_style(11, 57, bold=True))
+    ws.write_merge(row_num, row_num, 0, 28, 'RR passenger', get_cell_style(11, 57, bold=True))
     row_num += 1
-    ws.write(row_num, 0, '', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '', get_cell_style(11, 1, bold=True))
     for col, x in enumerate(xaxis):
-        ws.write(row_num, col + 1, x, ColorMapData.get_cell_style(11, 1, bold=True))
+        ws.write(row_num, col + 1, x, get_cell_style(11, 1, bold=True))
     row_num += 1
-    ws.write(row_num, 0, '实测值_RR', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '实测值_RR', get_cell_style(11, 1, bold=True))
     for col, value in enumerate(base_data['cma_rr_list']):
-        ws.write(row_num, col + 1, value, ColorMapData.get_cell_style(11, 1, bold=False))
+        ws.write(row_num, col + 1, value, get_cell_style(11, 1, bold=False))
     row_num += 1
-    ws.write(row_num, 0, '识别声压_RR', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '识别声压_RR', get_cell_style(11, 1, bold=True))
     for col, value in enumerate(base_data['tcm_rr_list']):
-        ws.write(row_num, col + 1, value, ColorMapData.get_cell_style(11, 1, bold=False))
+        ws.write(row_num, col + 1, value, get_cell_style(11, 1, bold=False))
 
     row_num += 3
-    ws.write_merge(row_num, row_num, 0, 1, '子系统评分', ColorMapData.get_cell_style(11, 57, bold=True))
+    ws.write_merge(row_num, row_num, 0, 1, '子系统评分', get_cell_style(11, 57, bold=True))
     row_num += 1
-    ws.write(row_num, 0, '四连杆', ColorMapData.get_cell_style(11, 1, bold=True))
-    ws.write(row_num, 1, '分数', ColorMapData.get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 0, '四连杆', get_cell_style(11, 1, bold=True))
+    ws.write(row_num, 1, '分数', get_cell_style(11, 1, bold=True))
     row_num += 1
     for data in base_data['sub_score_data']:
-        ws.write(row_num, 0, data['data_type'], ColorMapData.get_cell_style(11, 1, bold=True))
-        ws.write(row_num, 1, data['value'], ColorMapData.get_cell_style(11, 1, bold=False))
+        ws.write(row_num, 0, data['data_type'], get_cell_style(11, 1, bold=True))
+        ws.write(row_num, 1, data['value'], get_cell_style(11, 1, bold=False))
         row_num += 1
 
     bio = BytesIO()
