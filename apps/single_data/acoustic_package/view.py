@@ -32,8 +32,6 @@ def get_acoustic_package_data(se):
     backend_suspension = car_info.backend_suspension
     bs_type = DataConfigs.BACKEND_SUSPENSION_CONFS[backend_suspension]
     w_apc_objs = se.query(WAticPkgConfs).filter(WAticPkgConfs.bs_type == bs_type)
-    if not w_apc_objs:
-        return JsonResponse.fail('声学包无专家设定')
     apc_obj_dic = defaultdict(dict)
     for w_apc_obj in w_apc_objs:
         apc_obj_dic[w_apc_obj.data_type.code][w_apc_obj.conf_item] = {
@@ -52,11 +50,11 @@ def get_acoustic_package_data(se):
                     active_dic = copy.deepcopy(value)
                     active_dic['conf_item'] = key
         ret_data[data_type] = {
-            'active_conf': active_dic['conf_item'],
+            'active_conf': active_dic.get('conf_item'),
             'conf_items': conf_items,
-            'weight': active_dic['weight'],
-            'score': active_dic['score'],
-            'cost': active_dic['cost'],
+            'weight': active_dic.get('weight'),
+            'score': active_dic.get('score'),
+            'cost': active_dic.get('cost'),
         }
     return JsonResponse.success(ret_data)
 
