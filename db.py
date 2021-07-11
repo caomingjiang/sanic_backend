@@ -762,6 +762,31 @@ class TotalColorMapData(Base):
     )
 
 
+class SubsystemScoring(Base):
+    __tablename__ = 'subsystem_scoring'
+    DATA_TYPE_CHOICES = [
+        ('dstiff', '动刚度'),
+        ('ntf_dr', 'NTF-DR'),
+        ('ntf_rr', 'NTF-RR'),
+        ('spindle_dr', 'Spindle-DR'),
+        ('sub_spindle_rr', 'Spindle-RR'),
+    ]
+
+    id = Column(INTEGER(11), primary_key=True)
+
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
+    value = Column(Float, nullable=False, comment="分值")
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_data_type', 'car_info_id', 'data_type', unique=True),
+        {'comment': '子系统评分'}
+    )
+
+
 class CarExcelData(Base):
     __tablename__ = 'car_excel_data'
     DATA_TYPE_CHOICES = (
@@ -825,6 +850,61 @@ class CarBody(Base):
     __table_args__ = (
         {'comment': '单值数据-车身'}
     )
+
+
+class AticPkgConfs(Base):
+    __tablename__ = 'atic_pkg_confs'
+    DATA_TYPE_CHOICES = (
+        ("fwsa_aoc", "前围吸隔声_落水槽盖板空调新风口吸音棉Absorber on cowl"),
+        ("fwsa_fa", "前围吸隔声_前翼子板吸音棉Fender absorber"),
+        ("fwsa_gv", "前围吸隔声_前围内隔音垫(汽油机车型Gasoline Vehicle)"),
+        ("fwsa_hev", "前围吸隔声_前围内隔音垫(混合动力车型HEV)"),
+        ("fwsa_ev", "前围吸隔声_前围内隔音垫(纯电动车型EV)"),
+        ("fsaai_fsmt", "地板吸隔声_地板钣金厚度"),
+        ("fsaai_lbautf", "地板吸隔声_地板下大电池敷设面积"),
+        ("fsaai_fc", "地板吸隔声_主地毯隔音垫Floor Carpet"),
+        ("fsaai_mcip_fc", "地板吸隔声_主地毯隔音垫Floor Carpet(电池铺在地板下的车型)"),
+        ("fsaai_tbtbp", "地板吸隔声_地板下电池包与地板间的密封(电池铺在地板下的车型)"),
+        ("fsaai_rsls", "地板吸隔声_后座椅下部隔音垫"),
+        ("fsaai_bdprp", "地板吸隔声_车身阻尼垫、加强垫（前围、地板、顶盖、侧围、行李厢）"),
+        ("fsaai_ufpsac", "地板吸隔声_地板下护板（导流板）及吸音棉"),
+        ("swcf_hsac", "备胎舱地板吸隔声_三厢车衣帽架吸音棉"),
+        ("swcf_ttia", "备胎舱地板吸隔声_举升门内饰板吸音棉Tailgate trim inside absorber"),
+        ("swcf_tc", "备胎舱地板吸隔声_行李箱地毯"),
+        ("swcf_sipis", "备胎舱地板吸隔声_备胎舱内隔音垫"),
+        ("saaiowh_isms", "轮罩吸隔声_后轮罩内钣金隔音垫"),
+        ("saaiowh_wh", "轮罩吸隔声_轮罩"),
+        ("saaiowh_bceb", "轮罩吸隔声_车身空腔膨胀块Baffle"),
+        ("saaiorsw_saca", "后侧围吸隔声_后轮罩上方吸声棉(后侧围空腔隔音棉)"),
+        ("saaiorsw_itpor", "后侧围吸隔声_后侧围内饰板及其吸音棉"),
+        ("saaiosd_iposd", "侧门吸隔声_侧门内饰板及其吸音棉"),
+        ("saaiosd_dpd", "侧门吸隔声_车门板阻尼"),
+        ("saaiosd_dwm", "侧门吸隔声_车门防水膜"),
+    )
+
+    id = Column(INTEGER(11), primary_key=True)
+    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo')
+
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
+    conf_item = Column(String(128), nullable=False, comment='策略选型')
+    weight = Column(Float(precision='10,2'), nullable=False, comment='重量')
+    score = Column(Float(precision='10,2'), nullable=False, comment='分值')
+    cost = Column(Float(precision='10,2'), nullable=False, comment='成本')
+    update_time = Column(DATETIME, nullable=False, comment='更新时间')
+    create_time = Column(DATETIME, nullable=False, comment='创建时间')
+
+    __table_args__ = (
+        Index('car_info_data_type_conf_item', 'car_info_id', 'data_type', 'conf_item', unique=True),
+        {'comment': '声学包表'}
+    )
+
+    @classmethod
+    def comment_dic(cls):
+        ret_data = {}
+        for data_type, type_name in cls.DATA_TYPE_CHOICES:
+            ret_data[type_name] = data_type
+        return ret_data
 
 
 class WDesignLibrary(Base):
@@ -1187,7 +1267,7 @@ class WAticPkgConfs(Base):
 
     __table_args__ = (
         Index('bs_type_data_type_conf_item', 'bs_type', 'data_type', 'conf_item', unique=True),
-        {'comment': '声学包表'}
+        {'comment': '专家设定-声学包表'}
     )
 
     @classmethod

@@ -1,6 +1,8 @@
 from flask import Blueprint, request
 from apps.single_data.freq_data.control import SaveExcelData, get_current_car_excel_data, get_freq_data_car_selects
+from apps.state_conclusion.sound_predict.control import cal_total_color_map
 from common.common import JsonResponse, login_required, view_exception
+from confs.config import CommonThreadPool
 from db import CarInfo, CarExcelData, DataConfigs
 from common import data_validate
 from datetime import datetime
@@ -57,6 +59,10 @@ def save_freq_data(se):
         )
         se.add(active_car_excel)
     se.commit()
+
+    backend_suspension = car_info.backend_suspension
+    bs_type = DataConfigs.BACKEND_SUSPENSION_CONFS[backend_suspension]
+    CommonThreadPool.submit(cal_total_color_map, car_info.id, bs_type)
     return JsonResponse.success()
 
 

@@ -1,5 +1,5 @@
 import os
-from db import Session, CarExcelData, WCarExcelData, TotalColorMapData
+from db import Session, CarExcelData, WCarExcelData, TotalColorMapData, SubsystemScoring
 from ai.noise_algo_func import ntf_colourmap, dstiff_colourmap, Multi_Score_Predict
 from confs.config import UPLOAD_DIR
 from datetime import datetime
@@ -21,6 +21,7 @@ def cal_total_color_map(car_id, bs_type):
             if excel_path:
                 excel_df = pd.read_excel(os.path.join(UPLOAD_DIR, excel_path))
                 data_type = car_file.data_type.code
+                data_type = data_type.replace('ntf_', '') if 'spindle' in data_type else data_type
                 if data_type == 'dstiff':
                     single_color_map_df = dstiff_colourmap(excel_df)
                 else:
@@ -33,12 +34,14 @@ def cal_total_color_map(car_id, bs_type):
         weights_dict = {}
         for w_car_file in w_car_files:
             excel_path = w_car_file.excel_path
+            data_type = w_car_file.data_type.code
+            data_type = data_type.replace('ntf_', '') if 'spindle' in data_type else data_type
             if excel_path:
-                weights_dict[w_car_file.data_type.code] = pd.read_excel(os.path.join(UPLOAD_DIR, excel_path))
+                weights_dict[data_type] = pd.read_excel(os.path.join(UPLOAD_DIR, excel_path))
         if len(data_types) != len(list(weights_dict.keys())):
             raise Exception('专家设定权重文件不足')
         frequency_range_list = colourmap_dict['dstiff']['频率'].to_list()
-        dr_score, rr_score = Multi_Score_Predict(colourmap_dict, weights_dict)
+        dr_score, rr_score, sub_score = Multi_Score_Predict(colourmap_dict, weights_dict)
         insert_list = []
         now = datetime.now()
         for index, frequency_range in enumerate(frequency_range_list):
@@ -48,6 +51,14 @@ def cal_total_color_map(car_id, bs_type):
                 update_time=now, create_time=now
             ))
         se.query(TotalColorMapData).filter(TotalColorMapData.car_info_id == car_id).delete()
+        se.add_all(insert_list)
+
+        insert_list = []
+        for key, value in sub_score.items():
+            insert_list.append(SubsystemScoring(
+                car_info_id=car_id, data_type=key, value=round(float(value), 2), update_time=now, create_time=now
+            ))
+        se.query(SubsystemScoring).filter(SubsystemScoring.car_info_id == car_id).delete()
         se.add_all(insert_list)
         se.commit()
     except Exception as e:

@@ -1,6 +1,6 @@
 from flask import Blueprint
 from common.common import JsonResponse, login_required, view_exception
-from db import CarInfo, ColorMapActualTestData, TotalColorMapData, DataConfigs
+from db import CarInfo, ColorMapActualTestData, TotalColorMapData, DataConfigs, SubsystemScoring
 from apps.state_conclusion.sound_predict.control import cal_total_color_map
 from confs.config import CommonThreadPool
 
@@ -38,12 +38,22 @@ def get_sound_predict_data(se):
         new_xaxis_list.append(tcm_data.frequency_range)
         tcm_dr_list.append(tcm_data.dr_value)
         tcm_rr_list.append(tcm_data.rr_value)
+
+    sub_score_objs = se.query(SubsystemScoring).filter(SubsystemScoring.car_info_id == car_info.id)
+    sub_score_data = []
+    sub_comment_dic = dict(SubsystemScoring.DATA_TYPE_CHOICES)
+    for sub_score_obj in sub_score_objs:
+        sub_score_data.append({
+            'data_type': sub_comment_dic[sub_score_obj.data_type.code],
+            'value': sub_score_obj.value
+        })
     ret_data = {
         'xaxis_list': xaxis_list or new_xaxis_list,
         'cma_dr_list': cma_dr_list,
         'cma_rr_list': cma_rr_list,
         'tcm_dr_list': tcm_dr_list,
-        'tcm_rr_list': tcm_rr_list
+        'tcm_rr_list': tcm_rr_list,
+        'sub_score_data': sub_score_data
     }
     return JsonResponse.success(ret_data)
 
