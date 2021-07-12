@@ -197,6 +197,7 @@ class SaveWeightSettingsData(BaseModel):
 
 
 class SaveAticPkgConfsData(BaseModel):
+    data_type: str
     bs_type: str
     name: str
     url: str

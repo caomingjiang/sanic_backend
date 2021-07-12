@@ -104,6 +104,15 @@ def put_dev_car_info(car_id, se):
     return JsonResponse.success()
 
 
+@bp.route('car_info/<int:car_id>', methods=['DELETE'])
+@login_required
+@view_exception(fail_msg='delete_car failed', db_session=True)
+def delete_car(car_id, se):
+    se.query(CarInfo).filter(CarInfo.id == car_id).delete()
+    se.commit()
+    return JsonResponse.success()
+
+
 @bp.route('update_dev_car/<car_id>', methods=['PUT'])
 @login_required
 @view_exception(fail_msg='update_dev_car failed', db_session=True)

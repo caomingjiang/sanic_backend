@@ -53,8 +53,8 @@ class User(Base):
     account = Column(String(128), nullable=False, unique=True, comment='登录账号')
     username = Column(String(128), nullable=False, comment='用户姓名')
     password = Column(String(500), nullable=False, comment='密码')
-    role_id = Column(ForeignKey('role.id'), index=True)
-    role = relationship('Role')
+    role_id = Column(ForeignKey('role.id', ondelete='CASCADE'), index=True)
+    role = relationship('Role', cascade='all, delete')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
@@ -81,8 +81,8 @@ class CarInfo(Base):
     id = Column(INTEGER(11), primary_key=True)
     car_name = Column(String(128), nullable=False, unique=True, comment='车型名称')
 
-    dev_stage_id = Column(ForeignKey('dev_stage.id'), index=True, nullable=False, comment="当前开发阶段")
-    dev_stage = relationship('DevStage')
+    dev_stage_id = Column(ForeignKey('dev_stage.id', ondelete='CASCADE'), index=True, nullable=False, comment="当前开发阶段")
+    dev_stage = relationship('DevStage', cascade='all, delete')
 
     car_body = Column(String(128), nullable=False, comment='车身形式')
     front_suspension = Column(String(128), nullable=False, comment='前悬形式')
@@ -101,8 +101,8 @@ class CarTestInfo(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     dev_stage_id = Column(ForeignKey('dev_stage.id'), index=True, nullable=False, comment="开发阶段")
     dev_stage = relationship('DevStage')
@@ -139,8 +139,8 @@ class ChassisBase(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
     value = Column(Float(precision='10,2'), comment="值")
     score = Column(Float(precision='10,2'), comment="分值")
@@ -184,8 +184,8 @@ class ChassisDetail(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
     molecule = Column(Float(precision='10,2'), comment="数据输入-分子")
     denominator = Column(Float(precision='10,2'), comment="数据输入-分母")
@@ -209,8 +209,8 @@ class ModalMap(Base):
     __tablename__ = 'd_modal_map'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     value_range = Column(String(128), nullable=False, comment='值范围')
     front_tire = Column(Float(precision='10,2'), comment='前悬-轮胎')
@@ -251,8 +251,8 @@ class Dstiff(Base):
     __tablename__ = 'd_dstiff'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     frequency = Column(Float, nullable=False, comment='频率')
     fsb_ap_x = Column(Float(precision='10,2'), comment='前悬左塔座接附点X')
@@ -336,8 +336,8 @@ class ColorMapDstiff(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -361,8 +361,8 @@ class NtfDr(Base):
     __tablename__ = 'd_ntf_dr'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     frequency = Column(Float, nullable=False, comment='频率')
     fslftt_driver_x = Column(Float(precision='10,2'), comment='前悬左前塔座到DriverX')
@@ -437,8 +437,8 @@ class ColorMapNtfDr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -462,8 +462,8 @@ class NtfRr(Base):
     __tablename__ = 'd_ntf_rr'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     frequency = Column(Float, nullable=False, comment='频率')
     fslft_passenger_x = Column(Float(precision='10,2'), comment='前悬左前塔座到PassengerX')
@@ -539,8 +539,8 @@ class ColorMapNtfRr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -564,8 +564,8 @@ class SpindleNtfDr(Base):
     __tablename__ = 'd_spindle_ntf_dr'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     frequency = Column(Float, nullable=False, comment='频率')
     lfwc_driver_x = Column(Float(precision='10,2'), comment='左前轮心_DriverX')
@@ -611,8 +611,8 @@ class ColorMapSpindleNtfDr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -636,8 +636,8 @@ class SpindleNtfRr(Base):
     __tablename__ = 'd_spindle_ntf_rr'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     frequency = Column(Float, nullable=False, comment='频率')
     lfwc_rrx = Column(Float(precision='10,2'), comment='左前轮心_RRX')
@@ -683,8 +683,8 @@ class ColorMapSpindleNtfRr(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="权重值")
@@ -708,8 +708,8 @@ class ActualTestData(Base):
     __tablename__ = 'd_actual_test_data'
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     frequency = Column(Float, nullable=False, comment='频率')
     act_driver = Column(Float(precision='10,2'), comment='实测_Driver')
@@ -729,8 +729,8 @@ class ColorMapActualTestData(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     dr_value = Column(Float, nullable=False, comment="实测_Driver权重值")
     rr_value = Column(Float, nullable=False, comment="实测_RR-Passenger权重值")
@@ -748,8 +748,8 @@ class TotalColorMapData(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     frequency_range = Column(String(128), nullable=False, comment='频率范围')
     dr_value = Column(Float, nullable=False, comment="实测_Driver权重值")
     rr_value = Column(Float, nullable=False, comment="实测_RR-Passenger权重值")
@@ -774,8 +774,8 @@ class SubsystemScoring(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     value = Column(Float, nullable=False, comment="分值")
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
@@ -800,8 +800,8 @@ class CarExcelData(Base):
     )
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     excel_name = Column(String(128), comment='excel文件名称')
     excel_path = Column(String(250), comment='excel文件路径')
@@ -839,8 +839,8 @@ class CarBody(Base):
 
     id = Column(INTEGER(11), primary_key=True)
 
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(128)), comment="数据类型")
     value = Column(String(128), comment="值")
     score = Column(Float(precision='10,2'), comment="分值")
@@ -883,8 +883,8 @@ class AticPkgConfs(Base):
     )
 
     id = Column(INTEGER(11), primary_key=True)
-    car_info_id = Column(ForeignKey('car_info.id'), index=True, nullable=False, comment="车型")
-    car_info = relationship('CarInfo')
+    car_info_id = Column(ForeignKey('car_info.id', ondelete='CASCADE'), index=True, nullable=False, comment="车型")
+    car_info = relationship('CarInfo', cascade='all, delete')
 
     data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     conf_item = Column(String(128), nullable=False, comment='策略选型')
@@ -1212,16 +1212,22 @@ class WSpindleNtfRr(Base):
 
 class WSCarFileData(Base):
     __tablename__ = 'w_s_car_file_data'
+    DATA_TYPE_CHOICES = (
+        ('atic_pkg_confs', '声学包配置'),
+        ('artificial', '人工参数配置'),
+    )
 
     id = Column(INTEGER(11), primary_key=True)
-    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), unique=True, nullable=False, comment='后副车架形式')
+    bs_type = Column(ChoiceType(DataConfigs.BS_TYPE_CHOICES, String(50)), nullable=False, comment='后副车架形式')
+    data_type = Column(ChoiceType(DATA_TYPE_CHOICES, String(50)), nullable=False, comment='数据类型')
     file_name = Column(String(128), comment='json文件名称')
     file_path = Column(String(250), comment='json文件路径')
     update_time = Column(DATETIME, nullable=False, comment='更新时间')
     create_time = Column(DATETIME, nullable=False, comment='创建时间')
 
     __table_args__ = (
-        {'comment': '专家设定-声学包文件配置表'}
+        Index('bs_type_data_type', 'bs_type', 'data_type', unique=True),
+        {'comment': '专家设定-声学包、人工参数配置表'}
     )
 
 

@@ -1,8 +1,8 @@
 import os
 from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, CarExcelData, \
     ColorMapDstiff, ColorMapNtfDr, ColorMapNtfRr, ColorMapSpindleNtfDr, ColorMapSpindleNtfRr, \
-    ColorMapActualTestData, WCarExcelData, Session, TotalColorMapData
-from confs.config import UPLOAD_DIR, CommonThreadPool
+    ColorMapActualTestData, WSCarFileData
+from confs.config import UPLOAD_DIR
 import pandas as pd
 from datetime import datetime
 from common.common import get_orm_comment_dic
@@ -69,7 +69,16 @@ class SaveExcelData(object):
     def save_color_map(self, table_model, ai_method, ntf_str='ntf', dstiff=False):
         df = pd.read_excel(self.full_excel_path)
         if dstiff:
-            ret_df = ai_method(df)
+            ws_car_file = self.se.query(WSCarFileData).filter(
+                WSCarFileData.bs_type == self.bs_type, WSCarFileData.data_type == 'artificial'
+            ).first()
+            file_path = ws_car_file.file_path or ''
+            if not file_path:
+                code_log.error('人工参数配置文件不存在')
+                return
+            with open(os.path.join(UPLOAD_DIR, file_path), 'rb+') as f:
+                art_data = json.loads(f.read())
+            ret_df = ai_method(df, art_data['dstiff_target_map'])
         else:
             ret_df = ai_method(df, ntf_str)
         new_ret_df = ret_df.set_index('频率')

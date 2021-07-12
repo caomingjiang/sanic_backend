@@ -36,12 +36,14 @@ class AticPkgConfsData(object):
 
 
 def get_current_car_file_data(se, bs_type):
-    car_file = se.query(WSCarFileData).filter(WSCarFileData.bs_type == bs_type).first()
+    car_files = se.query(WSCarFileData).filter(WSCarFileData.bs_type == bs_type)
 
-    file_name, file_path = None, None
-    if car_file:
-        file_name = car_file.file_name or ''
-        file_path = car_file.file_path or ''
-    ret_data = [{'name': file_name, 'url': file_path}] if file_name else []
+    ret_data = {}
+    for car_file in car_files:
+        file_name, file_path = None, None
+        if car_file:
+            file_name = car_file.file_name or ''
+            file_path = car_file.file_path or ''
+        ret_data[car_file.data_type.code] = [{'name': file_name, 'url': file_path}] if file_name else []
     return ret_data
 

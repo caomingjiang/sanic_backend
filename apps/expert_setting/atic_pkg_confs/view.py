@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from apps.expert_setting.atic_pkg_confs.control import AticPkgConfsData, get_current_car_file_data
 from common.common import JsonResponse, login_required, view_exception
-from db import CarInfo, WSCarFileData
+from db import WSCarFileData
 from common import data_validate
 from datetime import datetime
 
@@ -25,12 +25,13 @@ def save_atic_pkg_confs_data(se):
 
     file_name = req_data.name
     file_path = req_data.url
-    save_obj = AticPkgConfsData(file_path, req_data.bs_type, se)
-    save_obj.save_data()
+    if req_data.data_type == 'atic_pkg_confs':
+        save_obj = AticPkgConfsData(file_path, req_data.bs_type, se)
+        save_obj.save_data()
 
     now = datetime.now()
     s_car_file = se.query(WSCarFileData).filter(
-        WSCarFileData.bs_type == req_data.bs_type
+        WSCarFileData.bs_type == req_data.bs_type, WSCarFileData.data_type == req_data.data_type
     ).first()
     if s_car_file:
         s_car_file.file_name = file_name
@@ -38,8 +39,8 @@ def save_atic_pkg_confs_data(se):
         s_car_file.update_time = now
     else:
         s_car_file = WSCarFileData(
-            bs_type=req_data.bs_type, file_name=file_name, file_path=file_path,
-            update_time=now, create_time=now
+            data_type=req_data.data_type, bs_type=req_data.bs_type, file_name=file_name,
+            file_path=file_path, update_time=now, create_time=now
         )
         se.add(s_car_file)
     se.commit()

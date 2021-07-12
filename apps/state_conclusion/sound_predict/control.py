@@ -1,6 +1,6 @@
 import os
 from db import Session, CarExcelData, WCarExcelData, TotalColorMapData, SubsystemScoring, \
-    ColorMapActualTestData, DataConfigs
+    ColorMapActualTestData, DataConfigs, WSCarFileData
 from ai.noise_algo_func import ntf_colourmap, dstiff_colourmap, Multi_Score_Predict
 from confs.config import UPLOAD_DIR, CommonThreadPool
 from datetime import datetime
@@ -8,11 +8,20 @@ from common.loggers import code_log
 import pandas as pd
 import xlwt
 from io import BytesIO
+import json
 
 
 def cal_total_color_map(car_id, bs_type):
     se = Session()
     try:
+        ws_car_file = se.query(WSCarFileData).filter(
+            WSCarFileData.bs_type == bs_type, WSCarFileData.data_type == 'artificial'
+        ).first()
+        file_path = ws_car_file.file_path or ''
+        if not file_path:
+            raise Exception('人工参数配置文件不存在')
+        with open(os.path.join(UPLOAD_DIR, file_path), 'rb+') as f:
+            art_data = json.loads(f.read())
         data_types = ['dstiff', 'ntf_dr', 'ntf_rr', 'spindle_ntf_dr', 'spindle_ntf_rr']
         car_files = se.query(CarExcelData).filter(
             CarExcelData.car_info_id == car_id,
@@ -26,7 +35,7 @@ def cal_total_color_map(car_id, bs_type):
                 data_type = car_file.data_type.code
                 data_type = data_type.replace('ntf_', '') if 'spindle' in data_type else data_type
                 if data_type == 'dstiff':
-                    single_color_map_df = dstiff_colourmap(excel_df)
+                    single_color_map_df = dstiff_colourmap(excel_df, art_data['dstiff_target_map'])
                 else:
                     cal_str = 'spindle_ntf' if 'spindle' in data_type else 'ntf'
                     single_color_map_df = ntf_colourmap(excel_df, cal_str)
@@ -44,7 +53,7 @@ def cal_total_color_map(car_id, bs_type):
         if len(data_types) != len(list(weights_dict.keys())):
             raise Exception('专家设定权重文件不足')
         frequency_range_list = colourmap_dict['dstiff']['频率'].to_list()
-        dr_score, rr_score, sub_score = Multi_Score_Predict(colourmap_dict, weights_dict)
+        dr_score, rr_score, sub_score = Multi_Score_Predict(colourmap_dict, weights_dict, art_data['artifical_params'])
         insert_list = []
         now = datetime.now()
         for index, frequency_range in enumerate(frequency_range_list):
