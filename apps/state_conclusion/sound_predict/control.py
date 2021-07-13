@@ -73,8 +73,10 @@ def cal_total_color_map(car_id, bs_type):
         se.query(SubsystemScoring).filter(SubsystemScoring.car_info_id == car_id).delete()
         se.add_all(insert_list)
         se.commit()
+        return True, ''
     except Exception as e:
         code_log.exception('sound_predict cal_total_color_map failed')
+        return False, str(e)
     finally:
         se.close()
 
