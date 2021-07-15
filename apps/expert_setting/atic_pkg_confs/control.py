@@ -1,5 +1,5 @@
 import os
-from db import WSCarFileData, WAticPkgConfs
+from db import WSCarFileData, WAticPkgConfs, DataConfigs, AticPkgConfs, CarInfo
 from confs.config import UPLOAD_DIR
 from datetime import datetime
 import json
@@ -29,6 +29,10 @@ class AticPkgConfsData(object):
                 insert_list.append(WAticPkgConfs(**save_dic))
         self.se.query(WAticPkgConfs).filter(WAticPkgConfs.bs_type == self.bs_type).delete()
         self.se.add_all(insert_list)
+        bs_type_names = [key for key, value in DataConfigs.BACKEND_SUSPENSION_CONFS.items() if value == self.bs_type]
+        car_infos = self.se.query(CarInfo).filter(CarInfo.backend_suspension.in_(bs_type_names))
+        car_info_ids = [car_info.id for car_info in car_infos]
+        self.se.query(AticPkgConfs).filter(AticPkgConfs.car_info_id.in_(car_info_ids)).delete(False)
         self.se.commit()
 
     def save_data(self):
