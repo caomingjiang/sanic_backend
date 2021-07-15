@@ -38,7 +38,9 @@ def single_fuchejia_func(key, value, fuchejia):
 
     thres_array = fuchejia[key][0]
     score = fuchejia[key][1]
-    # index = get_loc(value, thres_array)
+
+    if key in ['轮胎_胎面辐射声（轮胎选型）', '轮胎_力传递峰值', '轮胎_力传递峰值频率']:
+        score = 10 - score
 
     index = bisect_left(thres_array, value)
     # index = bisect_right(thres_array, value)
