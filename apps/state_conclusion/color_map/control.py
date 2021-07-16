@@ -140,21 +140,20 @@ class ColorMapData(object):
 
     @staticmethod
     def get_color_str(value):
-        value = value or 0
-        if 0 < value < 2:
-            color = '#EB0506'
-        elif 2 <= value < 4:
-            color = '#FC777C'
-        elif 4 <= value < 6:
-            color = '#EBEB10'
-        elif 6 <= value < 8:
-            color = '#027F01'
-        elif 8 <= value <= 10:
-            color = '#1E3366'
-        elif value == 0:
-            color = '#FFFFFF'
+        if value == '':
+            return '#FFFFFF'
+        if 0 <= value <= 5:
+            color = '#8B2C30'
+        elif 5 < value <= 6:
+            color = '#D1AF31'
+        elif 6 < value <= 7:
+            color = '#F4F247'
+        elif 7 < value <= 8:
+            color = '#10681C'
+        elif 8 < value <= 10:
+            color = '#293964'
         else:
-            color = '#FF00FF'
+            color = '#8B2C30'
         return color
 
     @staticmethod

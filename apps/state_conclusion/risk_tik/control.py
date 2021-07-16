@@ -4,7 +4,7 @@ from db import ModalMap
 
 
 def get_risk_tik_dict(se, table_model, car_info, type_mark):
-    datas = se.query(table_model).filter(table_model.car_info == car_info, table_model.value <= 3)
+    datas = se.query(table_model).filter(table_model.car_info == car_info, table_model.value <= 5)
     data_comment_dic = dict(table_model.DATA_TYPE_CHOICES)
     ret_dic = defaultdict(list)
     for data in datas:
