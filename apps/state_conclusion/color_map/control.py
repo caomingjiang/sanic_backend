@@ -143,17 +143,17 @@ class ColorMapData(object):
         if value == '':
             return '#FFFFFF'
         if 0 <= value <= 5:
-            color = '#8B2C30'
+            color = '#FF0000'
         elif 5 < value <= 6:
-            color = '#F4F247'
+            color = '#FFFF00'
         elif 6 < value <= 7:
-            color = '#10681C'
+            color = '#92D050'
         elif 7 < value <= 8:
-            color = '#7AC3ED'
+            color = '#1A6DB2'
         elif 8 < value <= 10:
-            color = '#293964'
+            color = '#003B68'
         else:
-            color = '#8B2C30'
+            color = '#FF0000'
         return color
 
     @staticmethod
