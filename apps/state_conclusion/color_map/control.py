@@ -145,11 +145,11 @@ class ColorMapData(object):
         if 0 <= value <= 5:
             color = '#8B2C30'
         elif 5 < value <= 6:
-            color = '#D1AF31'
-        elif 6 < value <= 7:
             color = '#F4F247'
-        elif 7 < value <= 8:
+        elif 6 < value <= 7:
             color = '#10681C'
+        elif 7 < value <= 8:
+            color = '#7AC3ED'
         elif 8 < value <= 10:
             color = '#293964'
         else:
