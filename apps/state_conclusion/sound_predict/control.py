@@ -17,7 +17,7 @@ def cal_total_color_map(car_id, bs_type):
         ws_car_file = se.query(WSCarFileData).filter(
             WSCarFileData.bs_type == bs_type, WSCarFileData.data_type == 'artificial'
         ).first()
-        file_path = ws_car_file.file_path or ''
+        file_path = ws_car_file.file_path if ws_car_file else ''
         if not file_path:
             raise Exception('人工参数配置文件不存在')
         with open(os.path.join(UPLOAD_DIR, file_path), 'rb+') as f:
