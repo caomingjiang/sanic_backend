@@ -56,7 +56,7 @@ class ColorMapData(object):
                 ])
         ret_data = {
             'x_axis': x_axis,
-            'y_axis': y_axis,
+            'y_axis': y_axis if color_data else [],
             'color_data': color_data,
         }
         return ret_data
