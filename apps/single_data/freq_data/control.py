@@ -72,7 +72,7 @@ class SaveExcelData(object):
             ws_car_file = self.se.query(WSCarFileData).filter(
                 WSCarFileData.bs_type == self.bs_type, WSCarFileData.data_type == 'artificial'
             ).first()
-            file_path = ws_car_file.file_path or ''
+            file_path = ws_car_file.file_path if ws_car_file else ''
             if not file_path:
                 code_log.error('人工参数配置文件不存在')
                 return
