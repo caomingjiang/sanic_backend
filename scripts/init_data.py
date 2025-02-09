@@ -23,21 +23,21 @@ def init_user():
 
         user_data = [
             {
-                'account': 'luzao123',
+                'account': '',
                 'username': '超级管理员',
-                'password': 'test123',
+                'password': '',
                 'role_code': 1
             },
             {
-                'account': 'luzao1',
+                'account': '',
                 'username': '普通管理员',
-                'password': 'pt@-123',
+                'password': '',
                 'role_code': 2
             },
             {
-                'account': 'luzao2',
+                'account': '',
                 'username': '专家',
-                'password': 'zj@-456',
+                'password': '',
                 'role_code': 3
             },
         ]
