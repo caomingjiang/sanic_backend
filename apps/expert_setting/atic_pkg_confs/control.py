@@ -1,13 +1,13 @@
 import os
 from db import WSCarFileData, WAticPkgConfs, DataConfigs, AticPkgConfs, CarInfo
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 from datetime import datetime
 import json
 
 
 class AticPkgConfsData(object):
     def __init__(self, file_path, bs_type, se):
-        self.full_excel_path = os.path.join(UPLOAD_DIR, file_path)
+        self.full_excel_path = os.path.join(env_config.UPLOAD_DIR, file_path)
         self.bs_type = bs_type
         self.se = se
 

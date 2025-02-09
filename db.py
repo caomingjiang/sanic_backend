@@ -3,10 +3,16 @@ from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import create_engine, Integer, String, Float, ForeignKey, Column, Boolean, Index
 from sqlalchemy.dialects.mysql import DATETIME, INTEGER, LONGTEXT, SMALLINT, TINYINT
 from sqlalchemy_utils import ChoiceType
-from confs.config import MYSQL_CONFIG
+from confs.config import env_config
 from enum import Enum, unique
 
-
+MYSQL_CONFIG = {
+    'db': env_config.MYSQL_DB,
+    'user': env_config.MYSQL_USER,
+    'password': env_config.MYSQL_PASSWORD,
+    'host': env_config.MYSQL_HOST,
+    'port': env_config.MYSQL_PORT,
+}
 engine = create_engine('mysql+pymysql://{user}:{password}@{host}:{port}/{db}'.format(**MYSQL_CONFIG),
                        pool_recycle=3600, encoding='utf-8')
 

@@ -1,6 +1,6 @@
 import os
 from db import WCarExcelData, WDstiff, WNtfDr, WNtfRr, WSpindleNtfDr, WSpindleNtfRr
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 import pandas as pd
 from datetime import datetime
 from collections import defaultdict
@@ -19,7 +19,7 @@ pd.set_option('max_colwidth', 100)
 
 class WSaveExcelData(object):
     def __init__(self, excel_path, bs_type, se):
-        self.full_excel_path = os.path.join(UPLOAD_DIR, excel_path)
+        self.full_excel_path = os.path.join(env_config.UPLOAD_DIR, excel_path)
         self.bs_type = bs_type
         self.se = se
 

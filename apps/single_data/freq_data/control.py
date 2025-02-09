@@ -2,7 +2,7 @@ import os
 from db import ModalMap, Dstiff, NtfDr, NtfRr, SpindleNtfDr, SpindleNtfRr, ActualTestData, CarExcelData, \
     ColorMapDstiff, ColorMapNtfDr, ColorMapNtfRr, ColorMapSpindleNtfDr, ColorMapSpindleNtfRr, \
     ColorMapActualTestData, WSCarFileData
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 import pandas as pd
 from datetime import datetime
 from common.common import get_orm_comment_dic
@@ -25,7 +25,7 @@ pd.set_option('max_colwidth', 100)
 
 class SaveExcelData(object):
     def __init__(self, excel_path, car_id, bs_type, se):
-        self.full_excel_path = os.path.join(UPLOAD_DIR, excel_path)
+        self.full_excel_path = os.path.join(env_config.UPLOAD_DIR, excel_path)
         self.car_id = car_id
         self.bs_type = bs_type
         self.se = se
@@ -76,7 +76,7 @@ class SaveExcelData(object):
             if not file_path:
                 code_log.error('人工参数配置文件不存在')
                 return
-            with open(os.path.join(UPLOAD_DIR, file_path), 'rb+') as f:
+            with open(os.path.join(env_config.UPLOAD_DIR, file_path), 'rb+') as f:
                 art_data = json.loads(f.read())
             ret_df = ai_method(df, art_data['dstiff_target_map'])
         else:

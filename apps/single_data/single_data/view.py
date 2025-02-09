@@ -7,7 +7,7 @@ from apps.single_data.single_data.control import ExportSingleData
 from db import CarInfo, ChassisBase, ChassisDetail, WCarFileData, DataConfigs
 from common import data_validate
 from datetime import datetime
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 from ai.noise_algo_func import single_fuchejia_all_func, single_fuchejia_func, single_xiabaibi_func
 
 bp = Blueprint('single_data', __name__, url_prefix='/api/v1/single_data/')
@@ -120,7 +120,7 @@ def cal_base_score(se):
     if not w_car_file:
         return JsonResponse.fail("缺少专家设定数据")
     car_file_url = w_car_file.file_path or ''
-    car_file_path = os.path.join(UPLOAD_DIR, car_file_url)
+    car_file_path = os.path.join(env_config.UPLOAD_DIR, car_file_url)
     if not os.path.exists(car_file_path):
         return JsonResponse.fail("缺少专家设定数据")
     with open(car_file_path, 'rb+') as f:
@@ -158,7 +158,7 @@ def cal_detail_score(se):
         stiffness_ratio = round(req_data.molecule / req_data.denominator, 2)
 
     car_file_url = w_car_file.file_path or ''
-    car_file_path = os.path.join(UPLOAD_DIR, car_file_url)
+    car_file_path = os.path.join(env_config.UPLOAD_DIR, car_file_url)
     if not os.path.exists(car_file_path):
         return JsonResponse.fail("缺少专家设定数据")
     with open(car_file_path, 'rb+') as f:

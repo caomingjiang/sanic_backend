@@ -3,7 +3,7 @@ from common.common import get_md5, JsonResponse, login_required, view_exception
 from common import data_validate
 from db import User
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
-from confs.config import SECRET_KEY, TOKEN_EXPIRES
+from confs.config import env_config
 from datetime import datetime, timedelta
 
 bp = Blueprint('auth', __name__, url_prefix='/api/v1/auth/')
@@ -19,7 +19,7 @@ def login(se):
         return JsonResponse.fail("该账号不存在")
 
     if db_user.password == get_md5(req_data.password):
-        s = Serializer(SECRET_KEY, expires_in=TOKEN_EXPIRES)
+        s = Serializer(env_config.SECRET_KEY, expires_in=env_config.TOKEN_EXPIRES)
         token = s.dumps({'user_id': db_user.id}).decode()
         create_time = db_user.create_time.strftime('%Y-%m-%d %H:%M:%S')
         ret_data = {

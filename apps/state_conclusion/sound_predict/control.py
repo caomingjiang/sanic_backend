@@ -2,7 +2,7 @@ import os
 from db import Session, CarExcelData, WCarExcelData, TotalColorMapData, SubsystemScoring, \
     ColorMapActualTestData, DataConfigs, WSCarFileData
 from ai.noise_algo_func import ntf_colourmap, dstiff_colourmap, Multi_Score_Predict
-from confs.config import UPLOAD_DIR, CommonThreadPool
+from confs.config import env_config, CommonThreadPool
 from datetime import datetime
 from common.loggers import code_log
 import pandas as pd
@@ -20,7 +20,7 @@ def cal_total_color_map(car_id, bs_type):
         file_path = ws_car_file.file_path if ws_car_file else ''
         if not file_path:
             raise Exception('人工参数配置文件不存在')
-        with open(os.path.join(UPLOAD_DIR, file_path), 'rb+') as f:
+        with open(os.path.join(env_config.UPLOAD_DIR, file_path), 'rb+') as f:
             art_data = json.loads(f.read())
         data_types = ['dstiff', 'ntf_dr', 'ntf_rr', 'spindle_ntf_dr', 'spindle_ntf_rr']
         car_files = se.query(CarExcelData).filter(
@@ -31,7 +31,7 @@ def cal_total_color_map(car_id, bs_type):
         for car_file in car_files:
             excel_path = car_file.excel_path
             if excel_path:
-                excel_df = pd.read_excel(os.path.join(UPLOAD_DIR, excel_path))
+                excel_df = pd.read_excel(os.path.join(env_config.UPLOAD_DIR, excel_path))
                 data_type = car_file.data_type.code
                 data_type = data_type.replace('ntf_', '') if 'spindle' in data_type else data_type
                 if data_type == 'dstiff':
@@ -49,7 +49,7 @@ def cal_total_color_map(car_id, bs_type):
             data_type = w_car_file.data_type.code
             data_type = data_type.replace('ntf_', '') if 'spindle' in data_type else data_type
             if excel_path:
-                weights_dict[data_type] = pd.read_excel(os.path.join(UPLOAD_DIR, excel_path))
+                weights_dict[data_type] = pd.read_excel(os.path.join(env_config.UPLOAD_DIR, excel_path))
         if len(data_types) != len(list(weights_dict.keys())):
             raise Exception('专家设定权重文件不足')
         frequency_range_list = colourmap_dict['dstiff']['频率'].to_list()

@@ -1,5 +1,5 @@
 import os
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 from datetime import datetime
 from db import WChassisBase, WChassisDetail, WCarBody, WCarFileData
 import json
@@ -7,7 +7,7 @@ import json
 
 class SingleDataConfsMethods(object):
     def __init__(self, excel_path, bs_type, se):
-        self.full_file_path = os.path.join(UPLOAD_DIR, excel_path)
+        self.full_file_path = os.path.join(env_config.UPLOAD_DIR, excel_path)
         self.bs_type = bs_type
         self.se = se
 

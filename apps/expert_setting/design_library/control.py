@@ -1,5 +1,5 @@
 import os
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 from common.common import get_orm_comment_dic
 from flask import request
 import zipfile
@@ -15,12 +15,12 @@ class AnalysisDesignLibraryZip(object):
         user_id = getattr(request, 'user_id')
         self.zip_url = zip_url
         zip_name = os.path.basename(zip_url).rsplit('.', maxsplit=1)[0]
-        self.extract_path = os.path.join(UPLOAD_DIR, str(user_id), today, zip_name)
+        self.extract_path = os.path.join(env_config.UPLOAD_DIR, str(user_id), today, zip_name)
         if not os.path.exists(self.extract_path):
             os.makedirs(self.extract_path)
 
     def save_zip(self):
-        zip_path = os.path.join(UPLOAD_DIR, self.zip_url)
+        zip_path = os.path.join(env_config.UPLOAD_DIR, self.zip_url)
         zf = zipfile.ZipFile(zip_path, 'r')
         zf.extractall(self.extract_path)
         col_dic = get_orm_comment_dic(WDesignLibrary)

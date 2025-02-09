@@ -1,7 +1,7 @@
 from flask import jsonify, request
 import hashlib
 import functools
-from confs.config import SECRET_KEY
+from confs.config import env_config
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 import string
 import random
@@ -51,7 +51,7 @@ def login_required(view_func):
             # 没接收的到token,给前端抛出错误
             return JsonResponse.fail('未登录', code=401)
 
-        s = Serializer(SECRET_KEY)
+        s = Serializer(env_config.SECRET_KEY)
         try:
             ud = s.loads(token)
             user_id = ud.get('user_id')

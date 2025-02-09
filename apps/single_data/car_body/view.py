@@ -6,7 +6,7 @@ from common.common import JsonResponse, login_required, view_exception
 from apps.single_data.car_body.control import ExportCarBodyData
 from db import CarInfo, CarBody, WCarFileData, DataConfigs
 from ai.noise_algo_func import single_cheshen_func
-from confs.config import UPLOAD_DIR
+from confs.config import env_config
 from common.loggers import code_log
 from common import data_validate
 from datetime import datetime
@@ -80,7 +80,7 @@ def car_body_cal_score(se):
     if not w_car_file:
         return JsonResponse.fail("缺少专家设定数据")
     car_file_url = w_car_file.file_path or ''
-    car_file_path = os.path.join(UPLOAD_DIR, car_file_url)
+    car_file_path = os.path.join(env_config.UPLOAD_DIR, car_file_url)
     if not os.path.exists(car_file_path):
         return JsonResponse.fail("缺少专家设定数据")
     with open(car_file_path, 'rb+') as f:
